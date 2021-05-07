@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://zssanguo.com/notebook/</id>
+    <title>刘大钰</title>
+    <updated>2021-05-07T07:57:18.679Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://zssanguo.com/notebook/"/>
+    <link rel="self" href="https://zssanguo.com/notebook/atom.xml"/>
+    <subtitle>刘大钰的个人日记</subtitle>
+    <logo>https://zssanguo.com/notebook/images/avatar.png</logo>
+    <icon>https://zssanguo.com/notebook/favicon.ico</icon>
+    <rights>All rights reserved 2021, 刘大钰</rights>
+    <entry>
+        <title type="html"><![CDATA[scaffold]]></title>
+        <id>https://zssanguo.com/notebook/post/scaffold/</id>
+        <link href="https://zssanguo.com/notebook/post/scaffold/">
+        </link>
+        <updated>2021-05-07T07:39:34.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="scaffold组件">Scaffold组件</h1>
+<p>按照先后顺序<br>
+1   backgroundcolor<br>
+全页面（  top: 0;right: 0;bottom: 0;left:0;）的背景色，默认用的是colors.bg_page及#F7F7F7,可指定并支持linear-gradient</p>
+<p>2   navbar插槽<br>
+immersive属性: 导航栏不占高度(即用fixed定位,使得导航栏下方元素与导航栏重叠)<br>
+<img src="https://zssanguo.com/notebook//post-images/1618971253390.png" alt="" loading="lazy"><br>
+navbar: navbar组件属性(title,theme,subTitle,bottomLineShow,leftBtnShow等)<br>
+statusbar: 是否含有APP状态栏<br>
+leftBtn插槽<br>
+title插槽<br>
+rightBtn插槽<br>
+3   flexible可折叠背景(导航栏下方,随着向上滑动收折,同样是fixed定位,不占高度)<br>
+flexible属性:backgroundColor,height,title,shrinkHeight(可被折叠的高度,不设则可全部收起),scaleRatio(折叠速度)<br>
+bindEl():控制上滑折叠效果。以anchor作为事件触发者,eventType作为事件类型。绑定element(flexible，decoration，navbar.headtitle和navbar.navbg)，通过自定义expression表达式，改变该element的property(opacity和transform.translateY)。使用到了weex的weex-bindingx（https://alibaba.github.io/bindingx/guide/cn_introduce）<br>
+4   decoration和flexible差不多不做介绍<br>
+5   top插槽<br>
+6   body插槽<br>
+scroller-type属性：根据scroller-type，采用不同组件装填默认插槽(list, scroller, div)<br>
+7   fixed插槽</p>
+<p>scaffold和flexible中有些地方用了 position: isApp ? 'absolute' : 'fixed'这样的判断。原因是navbar有可能是fixed定位，如果都用fixed定位就会把navbar给覆盖掉。</p>
+<p>页面高度<br>
+APP上有statusBarHeight(状态栏高度),原生标题栏高度（类似lightview上的标题栏）,主体区域,以及IOS底部安全区域/Andriod底部虚拟按键区域。我们页面默认的navbartype未0，及通顶效果（无状态栏和标题栏），所以在一些页面上，顶部组件的高度需要额外加上状态栏的高度height = height + statusBarHeight</p>
+<p>http://document.lightyy.com/zh-cn/docs/develop/olight-route.html#options-navBarType</p>
+<h1 id="shrinkheighttranslate和flexible可见区域">shrinkheight，translate和flexible可见区域</h1>
+<p>不设shrinkheight时<br>
+折叠屏往上滚动后<br>
+flexible区域（头部背景）的translateY变化把整个flexible区域顶上去了<br>
+<img src="https://zssanguo.com/notebook//post-images/1620373752163.png" alt="" loading="lazy"></p>
+<p>把shrinkheight设为0时，折叠屏网上滚动后flexible所在区域不变。<br>
+<img src="https://zssanguo.com/notebook//post-images/1620373589709.png" alt="" loading="lazy"><br>
+但是比如在交易详情中，flexible下面的列表是白色背景的。<br>
+所以在滚动时，底下的白色背景覆盖了上面的flexible区域，所以同样达到了flexible随滚动缩小的视觉效果。<br>
+<img src="https://zssanguo.com/notebook//post-images/1620373591851.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[编写说明文档]]></title>
+        <id>https://zssanguo.com/notebook/post/bian-xie-shuo-ming-wen-dang/</id>
+        <link href="https://zssanguo.com/notebook/post/bian-xie-shuo-ming-wen-dang/">
+        </link>
+        <updated>2021-04-19T08:58:26.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="说明文档">说明文档</h1>
+<p>基线版5.0用的是docsify生成的<br>
+docsify文档： https://docsify.js.org/#/</p>
+<h1 id="js工具库转api文档jsdoc2md">js工具库转API文档：jsdoc2md</h1>
+<h2 id="使用方法">使用方法</h2>
+<p>安装依赖<br>
+npm install<br>
+运行<br>
+node ./docs.js<br>
+配置输入js文件路径，输出md文件路径(docs.js)<br>
+const inputFile = 'D:\path\to\input\folder'<br>
+let docsDir = path.resolve('D:\path\to\output\folder')</p>
+<h2 id="工具库js文件标准写法">工具库js文件标准写法</h2>
+<pre><code>标题和namespace,标题作为md的标题,namespace作为生成md的文件名
+/**
+ * 新手引导API
+ * @namespace guide
+*/
+方法的注释里记得要加@memberof namespace，不然生成API文档中不包含该方法
+/**
+* 根据组件位置决定新手引导图片位置
+* @param {Array} options 选项
+* @param {String} options.ref ref对象名(ref为空则默认新手引导显示在top: 0)
+* @param {String} options.rect 新手指导图片显示在ref对象的哪个布局位置(默认bottom)
+* @param {Function} callback 回调函数
+* @memberof guide
+*/
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[组件v-on directive中使用Lifecycle hook]]></title>
+        <id>https://zssanguo.com/notebook/post/zu-jian-v-on-directive-zhong-shi-yong-lifecycle-hook/</id>
+        <link href="https://zssanguo.com/notebook/post/zu-jian-v-on-directive-zhong-shi-yong-lifecycle-hook/">
+        </link>
+        <updated>2021-04-15T07:52:17.000Z</updated>
+        <content type="html"><![CDATA[<p>&lt;component @hook:mounted=&quot;onComponentMounted()&quot; &gt;</component><br>
+通过在组件上添加v-on directive，在不侵入子组件的情况下，执行父组件的函数<br>
+原因：组件内的生命周期函数在执行结束后会 $emit 一个 hook + 生命周期名字 的自定义事件</p>
+<p>程序化的事件侦听器<br>
+https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%9A%84%E4%BA%8B%E4%BB%B6%E4%BE%A6%E5%90%AC%E5%99%A8</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[多层的Promise return]]></title>
+        <id>https://zssanguo.com/notebook/post/duo-ceng-de-promise-return/</id>
+        <link href="https://zssanguo.com/notebook/post/duo-ceng-de-promise-return/">
+        </link>
+        <updated>2021-04-14T08:07:59.000Z</updated>
+        <content type="html"><![CDATA[<p>遇到很多层的方法调用，又是.then又是callback，如果想把最底层的结果Promise.resolve上去，笨办法是每层方法和callback都要return一下，太繁琐。那么可以在最上层建个new Promise，然后在最底层的时候resolve</p>
+<pre><code>// 简洁的写法
+getContractFileUrl () {
+    return new Promise((resolve) =&gt; {
+        contractService.queryContract(form).then((contractInfo) =&gt; {
+            if (contractInfo.results.length &gt; 0) {
+                productDetailService.getFileUrl(contractInfo.results[0], (url) =&gt; {
+                    resolve(url);
+                })
+            } else {
+                resolve(&quot;&quot;);
+            }
+        });
+    })
+},
+</code></pre>
+<pre><code>// 丑陋的写法
+getContractFileUrl () {
+    return contractService.queryContract(form).then((contractInfo) =&gt; {
+        if (contractInfo.results.length &gt; 0) {
+            //getFileUrl得return callback给fileService.previewFile也得return
+            //previewFile得return callback给$.http.get(&quot;account/download/getFileToken&quot;)
+            //$.http.get(&quot;account/download/getFileToken&quot;)得return
+            return productDetailService.getFileUrl(contractInfo.results[0], (url) =&gt; {
+                return Promise.resolve(url);
+            })
+        } else {
+            return Promise.resolve(&quot;&quot;);
+        }
+    });
+},
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[!! typeof undefined null]]></title>
+        <id>https://zssanguo.com/notebook/post/typeof-undefined-null/</id>
+        <link href="https://zssanguo.com/notebook/post/typeof-undefined-null/">
+        </link>
+        <updated>2021-04-08T01:31:34.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://zssanguo.com/notebook//post-images/1617845514394.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[电子合同流程梳理]]></title>
+        <id>https://zssanguo.com/notebook/post/dian-zi-he-tong-liu-cheng-shu-li/</id>
+        <link href="https://zssanguo.com/notebook/post/dian-zi-he-tong-liu-cheng-shu-li/">
+        </link>
+        <updated>2021-03-30T08:37:57.000Z</updated>
+        <content type="html"><![CDATA[<p>trade-history<br>
+在当tradeInfo.operate_type是A3时根据电子合同的状态tradeInfo.contract_status是否为1决定进入contract-confirm确认合同，否则进入contract-apply补充信息。</p>
+<p>contract-apply<br>
+查询queryCustInfo并将身份信息填充，查询queryTrustBankCardInfo并将合同信息填充。<br>
+银行卡部分只显示鉴权银行卡，并且当只有1张时默认选择第一张，手机号用了CryptoJS将mobileno_internet_en解密成正常手机号。<br>
+非银行卡补充信息用的pop-picker，点击时触发onPicker(name),根据name匹配不同的字典（字典queryDict时查询了性别，职业，国籍生成dictMap），onPicker在pick里（pop-picker里）会根据value计算selectedValue（value不存在即首次打开未选择时默认为0，否则为选择值）并以此setSelectedIndex(picker里)，然后设置finsihCb，再完成后finishSelectCycle中触发回调。回调中将选择的index设置到pickerIndexMap[name]里并更新contractInfo。<br>
+银行卡用的pop-view。pop-view里为bank-info组件的数组和添加银行卡按钮，添加银行卡在完成后hsback三级回到contract-apply页面,选择银行卡onSelectedCard会将银行卡信息存在selectedCard里<br>
+下一步时会校验contractInfo和selectedCard并跳转到contract-confirm</p>
+<p>contract-confirm<br>
+查询个人信息queryCustInfo、查询交易流水queryTradeFlow、获取上一步补充信息：<br>
+contract_status为1（有合同查询交易申请）：getApplyInfo-&gt;querySavedContract-&gt; queryPurchaseApply<br>
+否则getApplyInfo-&gt; getApplyContract-&gt; queryContractForm查询合同交易表单)<br>
+然后将个人信息，交易流水和申请信息填充<br>
+同意签署onSubmit -&gt; jumpNext：<br>
+如果身份证且开启人脸识别，contract-liveface<br>
+否则以PDF签署，打开PDF预览回调后会打开contract-sign。addContractOrConfirmPdf-&gt;confirmPdf-&gt; openPdf-&gt; previewFileWithConfirm-&gt;goSignCA()</p>
+<p>Contract-sign<br>
+通过短信验证码确认签署<br>
+发送短信验证码getCode-&gt; contractService.sendcode，countdown-button用的button组件，如果isCountDowning屏蔽onclick的sendSmsCode（直接return）并颜色为灰色。<br>
+填写验证码verify-code组件 oncomplete时触发validateCode-&gt;contractService.sign，30秒后跳转contract-result</p>
+<p>Contract-result<br>
+queryCapitalStatus-&gt;historyService.queryTradeInfoList获取交款信息，capital_status状态为3已交款就隐藏缴款引导</p>
+<p>Contract-liveface（底下的loading时不显示的）<br>
+liveface-guide，onclick时startLiveface，会检测buss_flag为2是签署电子合同，调用getLiveToken-&gt;livefaceService.verifyFac-&gt;account/account/verifyFaceId获取biz_token，传参biz_token回调进行人脸识别this.liveface-&gt;livefaceService.liveDetection-&gt;LightSDK.native.callNative(&quot;livestill.startLiveStill&quot;)，成功后emit(“livefaceNext”)。然后contract-liveface在onLivefaceNext时会addContractOrConfirmPdf进行同contract-confirm的电子合同签署</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[原生拓展能力梳理]]></title>
+        <id>https://zssanguo.com/notebook/post/native/</id>
+        <link href="https://zssanguo.com/notebook/post/native/">
+        </link>
+        <updated>2021-03-30T07:28:51.000Z</updated>
+        <content type="html"><![CDATA[<p>项目里如何调原生方法<br>
+LightSDK.native.callNative(key, cb) - 通用，可调用原生拓展方法<br>
+LightSDK.native.methodName(key, cb) - 仅调用原生内置方法</p>
+<p>调用原生内置方法可以直接通过LightSDK.native.methodName()是因为node_modules/light-sdk/lib/native.js里封装了这些方法，本质上和callNative()一样是调用的bridge.call(method, params, cb)</p>
+<p>拓展原生能力</p>
+<ol>
+<li>APP项目里拓展新project&amp;方法：</li>
+</ol>
+<pre><code>// ${projectName}/src/main/java/com/hundsun/${projectName}/JSAPI/LightJSAPI.java
+public class LightJSAPI implements interfaceName {
+    public void methodName(){
+        //blah blah blah
+    }
+}
+</code></pre>
+<p>案例：</p>
+<ul>
+<li>LightSDK.native.callNative(&quot;common.openCameraOrPhoto&quot;)是调用Andriod\src\main\java\com\hundsun\common\JSAPI\LightJSAPI.java里的openCameraOrPhoto()</li>
+<li>LightSDK.native.callNative(&quot;video_rec.video&quot;)是调用Andriod\video_rec\src\main\java\com\hundsun\video_rec\JSAPI\LightJSAPI.java里的video()</li>
+</ul>
+<p>build.gradle最终将拓展库和原生库(xxx.arr格式引用在libs下)打包到一起<br>
+拓展库：<br>
+<code>implementation project(path: ':filegmu') //PDF 阅读</code><br>
+原生库：<br>
+<code>implementation(name: 'jsnativegmu', ext: 'aar') //JSNative容器库</code></p>
+<ol start="2">
+<li>拓展weex module</li>
+</ol>
+<ul>
+<li>创建dialog module (src\main\java\com\hundsun\extend\module\WXDialogModule.java)</li>
+</ul>
+<pre><code>public class WXDialogModule extends WXModule {
+  //blah blah blah
+}
+</code></pre>
+<ul>
+<li>在WeexPlugins中注册（src\main\java\com\hundsun\extend\WeexPlugins.java）</li>
+</ul>
+<pre><code>WXSDKEngine.registerModule(&quot;dialog&quot;, WXDialogModule.class);
+</code></pre>
+<ul>
+<li>在h5项目中使用：</li>
+</ul>
+<pre><code>weex.requireModule(&quot;dialog&quot;)
+</code></pre>
+<ol start="3">
+<li>拓展weex 组件</li>
+</ol>
+<ul>
+<li>创建shadowview组件(src\main\java\com\hundsun\extend\components\WXShadowViewComponent.java):</li>
+</ul>
+<pre><code>public class WXShadowViewComponent extends WXVContainer&lt;ShadowLayout&gt; {
+  //blah blah blah
+}
+</code></pre>
+<ul>
+<li>在WeexPlugins中注册（src\main\java\com\hundsun\extend\WeexPlugins.java）</li>
+</ul>
+<pre><code>WXSDKEngine.registerComponent(&quot;shadow-view&quot;, WXShadowViewComponent.class, false);
+</code></pre>
+<ul>
+<li>在h5项目中使用(不用require，直接可用)：</li>
+</ul>
+<pre><code>&lt;component :style=&quot;shadowStyle&quot; :is=&quot;isAndroid?'shadow-view':'div'&quot;&gt;&lt;/component&gt;
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Vue Loader]]></title>
+        <id>https://zssanguo.com/notebook/post/vue-loader/</id>
+        <link href="https://zssanguo.com/notebook/post/vue-loader/">
+        </link>
+        <updated>2021-03-15T09:00:16.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="vue-loader的作用">Vue loader的作用</h1>
+<p>Vue-loader配置处理资源路径(资源url转换为webpack模块请求)<br>
+e.g. src=&quot;../image.png&quot; =&gt; require(&quot;../image.png&quot;);<br>
+Vue-loader默认处理了video,source,img,image,use,所以我们才可以在配置attr时使用webpack路径,比如<code>&lt;image src=&quot;@/assets/images/xxx.png&quot; /&gt;</code><br>
+https://vue-loader.vuejs.org/guide/asset-url.html</p>
+<h1 id="vue-loader配置">Vue loader配置</h1>
+<p>那我们该怎么给自定义component配置呢?</p>
+<h2 id="方法1-webpackconfigjs">方法1 webpack.config.js</h2>
+<p>直接配在webpack.config.js,plugins中引入VueLoaderPlugin,然后module.rules里面指定test到什么表达式时load什么loader<br>
+https://vue-loader.vuejs.org/guide/#manual-setup</p>
+<pre><code>   plugins: [
+     new VueLoaderPlugin()
+   ],
+   module: {
+     rules: [
+       {
+         test: /\.vue$/,
+         loader: 'vue-loader'
+       }
+     ]
+   }, 
+</code></pre>
+<h2 id="方法2-vueconfigjs">方法2 vue.config.js</h2>
+<p>可是本项目用的是vue cli,要自定义webpack配置要怎么办呢? 欸,这个vue-cli文档里写了,可让我好找了一翻<br>
+在vue.config.js里chainWebpack,来修改webpack的config<br>
+https://cli.vuejs.org/guide/webpack.html#modifying-options-of-a-loader</p>
+<pre><code>  chainWebpack: (config) =&gt; {
+    config.module
+      .rule(&quot;vue&quot;)
+      .use(&quot;vue-loader&quot;)
+      .tap((options) =&gt; {
+        // 这里我们配置,转换v-img组件的src属性
+         options.transformAssetUrls = {
+             //blah blah blah
+             &quot;v-img&quot;: &quot;src&quot;,
+         }
+        return options
+      });
+  },
+</code></pre>
+<h1 id="动态绑定attr的问题">动态绑定attr的问题</h1>
+<p>我在方法2改写options之前打印了一下,实际可以看到,vue-loader的transformAssetUrls中已经包含了v-img<br>
+<img src="https://zssanguo.com/notebook//post-images/1615962311171.png" alt="" loading="lazy"><br>
+在实际使用中,我们发现以下场景</p>
+<pre><code>&lt;v-img src=&quot;@/assets/images/inventory/item.png&quot; /&gt;  // 1.图片显示正常
+&lt;v-img :src=&quot;@/assets/images/inventory/' + item.image&quot; /&gt;  // 2.图片不显示
+</code></pre>
+<p>在场景1中,我们证实了v-img的src属性确实被webpack捕捉到并require了<br>
+但是为什么场景2中又不行了呢? <a href="https://github.com/vuejs-templates/webpack/issues/126">Evan在这里说明了情况</a></p>
+<blockquote>
+<p>Because the imagePath is only rendered by Vue at runtime, Webpack has no chance of rewriting it. In your JS, use require('~assets/' + this.country.name + '.jpg') instead. This allows Webpack to return the correct static path.</p>
+</blockquote>
+<p>因为是动态绑定的,imageUrl是runtime被渲染的,static的webpack无法捕捉然后转换成require(),所以动态src的情况下,我们还是得用requireΣ(っ °Д °;)っ</p>
+<pre><code>&lt;v-img :src=&quot;require('@/assets/images/inventory/' + item.image)&quot; /&gt;  // 3. 图片显示正常
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[zssanguo开发笔记]]></title>
+        <id>https://zssanguo.com/notebook/post/zssanguo/</id>
+        <link href="https://zssanguo.com/notebook/post/zssanguo/">
+        </link>
+        <updated>2021-02-15T12:39:27.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="20210215">2021/02/15</h1>
+<p>第一篇开发日志，开始记录以便以后查阅修改点和待做项。<br>
+当前已实现的功能：<br>
+登录页:</p>
+<p>//TODO 考虑介绍模块后再加点内容吧，因为介绍模块可折叠，所以视差特效看着不明显/(ㄒoㄒ)/~~<br>
+背景parallex（填满整个浏览器窗口高度，下滑会有视差特效）<br>
+<img src="https://zssanguo.com/notebook//post-images/1613396197530.gif" alt="" loading="lazy"><br>
+介绍expansion panels（点中的模块悬浮展示，其他模块收起）<br>
+弹窗    //TODO 加入回车触发登录/注册<br>
+→注册弹窗(注册前本地验证+网络验证)<br>
+→登录弹窗(网络验证) //TODO 本地验证</p>
+<p>导航栏:<br>
+参考了E-SIM的布局，左侧边栏是用户信息，新加了可以切换展开/收缩。PC大屏幕下菜单在右上角横置。那么问题来了，手机上呢？手机上把菜单做成右侧边栏了，且考虑占地方所以将两边都做成了临时态的（类似modal那种overlay）。。。以后有其他好的方案可以修改<br>
+<img src="https://zssanguo.com/notebook//post-images/1613395013477.png" alt="" loading="lazy"><br>
+<img src="https://zssanguo.com/notebook//post-images/1613395019189.png" alt="" loading="lazy"></p>
+<p>snackbar消息提示：<br>
+页面跳转后（比如登录/登出）以及页面内进行操作时显示提示消息</p>
+<p>modal弹窗提示：<br>
+//TODO 先挖坑</p>
+<p>全局状态管理：<br>
+//FIXME 导航栏根据用户状态判断是否需要展示导航栏。因为登录跳转后，从服务器请求的用户状态还没来得及返回，导致刚进入主页是没有导航栏的，必须手动刷新一下。考虑用其他方法判断登录状态？<br>
+当前保存的全局状态有:<br>
+users用户(用户状态)<br>
+tools 工具(全局工具类组件的状态)    //TODO 当前只有snackbar，后续增加modal</p>
+<p>路由管理：<br>
+路由管理做了以下事情：<br>
+页面跳转后，展示snackbar提示和modal弹窗（如果需要）<br>
+进入新页面回到顶部</p>
+<h1 id="20210329">2021/03/29</h1>
+<p>记一次问题解决，浏览器F5刷新后由原先view跳转到了主页。<br>
+在网上搜了很多资料，有的是路由匹配的优先顺序问题<code>{ path: '*', redirect: '/' }</code>, https://stackoverflow.com/questions/59307620/vue-router-refresingf5-current-page<br>
+然而我们并没有做类似处理，不过以后再配这些或者404页面的时候，也要注意一下不要犯相同错误。</p>
+<p>直到看到这个贴（见comment），https://stackoverflow.com/questions/60361064/vuejs-route-redirect-on-refresh。 他是因为刷新后store state没了，导致router.beforeEach里islogged的逻辑触发重定向到了登录页。然后发现我犯了类似的错误，tcb里onLoginStateChanged观测loginState变化时，如果变为已登录状态，则触发登录（登录会修改store对的user state并跳转到home），如果变为未登录状态，则触发登出（清空user state并跳转到login）。因为刷新后onLoginStateChanged再次触发， 然后因为已登录状态，所以重定向去了home。修改方案为tcb里的onLoginStateChanged只修改store的user state，登录跳转home通过dispatch login后的回调来实现。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[信托学习笔记]]></title>
+        <id>https://zssanguo.com/notebook/post/xintuo/</id>
+        <link href="https://zssanguo.com/notebook/post/xintuo/">
+        </link>
+        <updated>2021-02-04T09:20:38.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="反向代理">反向代理</h1>
+<p>在浏览器上伪装成向本机IP的appServer发送请求<br>
+实际上是给远程服务器发送的请求,解决跨域的问题.<br>
+config.json中配置appBaseUrl，即接口服务地址，如果这里用相对域名/trustgateway，那么请求发送给的就是192.168.114.6:3000/trustgateway<br>
+project.json中proxy里面的配置key是/trustgateway，应该是当请求的地址匹配192.168.114.6:3000/trustgateway时，实际请求的是后面配的192.168.114.6:8080/trustgateway<br>
+在使用mock地址时，因为appBaseUrl和proxy不匹配，所以proxy并没有生效，但是mock服务器response header返回了access-control-allow-origin:192.168.114.6:3000,所以没有跨域报错.</p>
+<pre><code>//config.json
+  &quot;appBaseUrl&quot;: &quot;/trustgateway/&quot;,
+
+//project.json
+  &quot;pluginConfig&quot;: {
+  	&quot;proxy&quot;: {
+  		&quot;/trustgateway&quot;: &quot;http://192.168.114.6:8080/&quot; //此处为真实服务器地址
+  	}
+  }
+</code></pre>
+<h1 id="tomcat-开发环境业务网关服务器">TOMCAT 开发环境(业务网关)服务器</h1>
+<p>war包放在webapps里，跑tomcat时会自动解压生成项目文件夹<br>
+WEB-INF/classes/config<br>
+appServerConfig.properties    //appServer基础配置<br>
+appControlConfig.properties //如果部分配置在app写死,如果要修改app需要重新打包,所以将配置环境迁移至业务网关,app通过请求接口获取配置<br>
+privateConfig.properties    //客户个性化配置<br>
+WEB-INF/classes/application.properties //app.registry.address (注册中心地址，业务网关CRM等通过RPC协议统一注册到注册中心)</p>
+<p>改端口<br>
+conf/server.xml<br>
+<code>&lt;Connector port=&quot;8080&quot; protocol=&quot;HTTP/1.1&quot; connectionTimeout=&quot;20000&quot; redirectPort=&quot;8443&quot; URIEncoding=&quot;UTF-8&quot;/&gt;</code></p>
+<p>Tomcat产生logs<br>
+/logs</p>
+<p>war包产生logs<br>
+/bin/logs</p>
+<h1 id="nginx-host前端app并反向代理连接开发环境服务器">Nginx host前端app并反向代理连接开发环境服务器</h1>
+<p>``<br>
+开发环境的实现<br>
+/usr/local/nginx<br>
+server {<br>
+listen 8801;<br>
+server_name 10.20.146.48 ;<br>
+# 主页/, 打开的是/home/nginx/html5文件夹里的build出来的web app<br>
+location / {<br>
+root /home/nginx;<br>
+# try_files $uri $uri/ /index.html;<br>
+index index.html;<br>
+}<br>
+# 二级域名/trustgateway, 反向代理到开发环境服务器<br>
+location /trustgateway {<br>
+proxy_pass http://10.20.146.48:8094/trustgateway/;</p>
+<pre><code>            #为nginx配置的一些配置项，以此获取真实的访问地址
+            proxy_set_header Host $Host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Port $Server_port;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection &quot;upgrade&quot;;
+    }
+</code></pre>
+<p>}</p>
+<p>/home/nginx/html5<br>
+该文件夹下为build出来的web app<br>
+``</p>
+<h1 id="项目地址配置-反向代理">项目地址配置 (反向代理)</h1>
+<p>config.json appBaseUrl 指定了请求接口的服务器地址<br>
+信托项目为 /trustgateway/, 即发送req请求时,请求的地址为localhost:xxxx/trustygateway/<br>
+在浏览器上伪装成向本机IP的appServer发送请求<br>
+pluginConfig中指定了需要代理的真实服务器地址<br>
+即伪装成对本机IP(同域)的appServer发送请求,实际上请求的是&quot;http://10.20.xx.xx:xxxx/&quot;远程服务器<br>
+&quot;pluginConfig&quot;: {<br>
+&quot;proxy&quot;: {<br>
+&quot;/trustgateway&quot;: &quot;http://10.20.xx.xx:xxxx/&quot;<br>
+}<br>
+}</p>
+<h1 id="常用数据库表格">常用数据库表格</h1>
+<p>``<br>
+--短信验证码<br>
+select * from tsms_send order by L_serialno desc</p>
+<p>--字典表<br>
+select * from tdictionary</p>
+<p>--系统参数表<br>
+select * from tsysparameter</p>
+<p>--潜在用户表(只注册没有开过户的账号)<br>
+select * from tunregister</p>
+<p>--真实用户表<br>
+select * from tcustomerinfo</p>
+<p>-- 行情表<br>
+select * from tfundday</p>
+<p>OCI库配置<br>
+配置-首选项-链接-OCI库-配置成文件夹下的oci.dll<br>
+``</p>
+<h1 id="andriod-studio">andriod studio</h1>
+<p>将build好的web app放到android\src\main\assets\www中，andriod应用就可以本地访问页面（即lightdist里的js文件）<br>
+src/main/assets/gmu/main.gmu的gmu://jsnative#home是懒加载，类似vue router里的异步import。等同于为先import app.native.js,然后再import lightdist/index-home.native.js<br>
+main.gmu(tab菜单的配置) 是否预加载，菜单的title、路径、是否需要登录，导航栏和菜单配色<br>
+jsnative.gmu(tab页的配置) 菜单栏页面的配置(pageid,startPage,navigationbar)<br>
+因为其他页面的跳转都是走hsopen（然后通过传参来控制页面样式，比如navbartype来控制是否显示navbar），tab页的切换不走hsopen控制不了，所以在原生jsnative这里来配置tab页的样式。<br>
+记得修改config.json 这里配置appBaseUrl为真实服务器地址(有些原生的地方,比如启动的时候也会用到服务器)</p>
+<h2 id="热更新">热更新</h2>
+<p>通过采用服务器文件而不是本地文件，服务器文件更新时APP对应的文件也会自动更新。<br>
+jsnative.gmu:</p>
+<pre><code>&quot;inputParams&quot;:{
+    // 原先，等于用的是lightdist/index-home.native.js，每次更新都需要重新打包
+    &quot;startPage&quot;:&quot;app.native.js#/home&quot;
+    // 现在，重新编译服务器页面更新后，APP的home页面也跟着更新
+    &quot;startPage&quot;:&quot;http://192.168.137.237:3000/app.native.js#/home&quot;
+},
+</code></pre>
+<p>jsnative.gmu只对菜单页面进行了配置，那非tab页面要怎么热更新呢？<br>
+注：非tab页面是打包在tab页面下的，所以只需要将菜单页面全部改用服务器文件即可。</p>
+<p>@xxx对应的是src/main/res/values/xxx<br>
+@string/app_name：<br>
+src/main/res/values/string.xml<br>
+<string name="app_name">昆仑信托</string></p>
+<p>@string/safe_welcome_info:<br>
+safe_operation\src\main\res\values\strings.xml<br>
+<string name="safe_welcome_info">欢迎您</string></p>
+<p>com.hundsun.xxx 对应的是rc/main/java/com/hundsun/xxx<br>
+com.hundsun.fzfb.SetGetureActivity:<br>
+src/main/java/com/hundsun/fzfb/SetGetureActivity.java</p>
+<h1 id="生命钩子">生命钩子</h1>
+<p>aftershow实际上是在mounted中加入的（light对mounted进行了改写）。根据mode，可能比mounted先执行，或者比mounted后执行。信托中，不要用aftershow，在created中通过this.$query去查询传参。</p>
+<h1 id="broadcast">Broadcast</h1>
+<p>原生下用的是weex的BroadcastChannel注册，H5下用的是eventList<br>
+receive时将callback根据key值（事件名）注册到eventList里，当send触发时，将eventList里对应key的callback依一运行。</p>
+<h1 id="keep-alive">Keep-alive</h1>
+<p>Index.vue -&gt; keep-alive中:include=&quot;cacheViewList&quot;指定哪些页面会被keep alive. include匹配首先检查组件自身的 name 选项<br>
+比如supplement-bank.vue里,我们定义的是</p>
+<pre><code>export default {
+    name: 'supplement-bank' //this.$options.name
+}
+</code></pre>
+<p>所以我们在setCacheView时,要确保传进去的view名称和上面name保持一致</p>
+<pre><code>$.setCacheView(this.$options.name, true)
+$.setCacheView(&quot;supplement-bank&quot;, false)
+</code></pre>
+<p>在plugin.js router beforeRouteEnter时，router会判断如果to.meta.cache（即index.html中view的cache属性）是true，则调用setCacheView将to页面缓存</p>
+<p>setCacheView在index.vue重写了,定义为如果cache为true且cacheviewlist里没有,会把该页加入在keep-alive里的cacheviewlist</p>
+<p>在plugin.js router beforeRouteLeave时,如果from的cache是true,然后to页面的cacheview不包含from,会取消from页的缓存。这里判断了this.$options.name是否存在,所以如果要清from页缓存,需要给from组件定义name</p>
+<pre><code>// from.vue
+export default {
+    name: 'supplement-bank' //this.$options.name
+}
+</code></pre>
+<p>或者是to的cache是true,然后from页面的cacheview不包含to，取消to页的缓存。这里判断了to.meta.viewname是否存在,所以如果要清to页缓存,需要给to页指定viewname属性</p>
+<pre><code>// index.html
+&lt;view id=&quot;bankcard/supplement-bank&quot; cache=&quot;true&quot; viewname=&quot;supplement-bank&quot; parent=&quot;index&quot; async=&quot;true&quot; chunkname=&quot;add-bank&quot;/&gt;
+</code></pre>
+<p>交易记录/注册/忘记密码/买入/卖出/新增银行卡/活动记录/积分购买礼物这些页面被缓存了，其他页面不被缓存(即重新进入时会重新加载)</p>
+<h1 id="markrequest-storagegetorrequest">markRequest $.storage.getOrRequest</h1>
+<p>我们会发现有些页面(比如trust-list)没有keep alive,但是再次进入时没有再次请求接口，这是怎么回事呢？其实是$.storage.getOrRequest做了一层判断，getOrRequest(saveKey: String, request: Function, opts)；如果storage里有saveKey对应的数据，则从storage中获取数据；如果storage里没有，则调用request函数</p>
+<h1 id="v-bind-vs-v-bindattribute-vs-v-model-vs-sync-用一个父元素object设置多个子元素props">v-bind vs v-bind:attribute vs v-model vs sync 用一个父元素object设置多个子元素props</h1>
+<p>// binding an attribute<br>
+v-bind:attr=&quot;parentParam.attr&quot;<br>
+// binding an object of attributes<br>
+v-bind=&quot;parentParam&quot;<br>
+// binding an object of attributes and adding v-on update listener for each attribute<br>
+v-bind.sync=&quot;parentParam&quot;<br>
+//v-model vs .sync<br>
+.sync<br>
+<comp :value.sync="username" :age.sync="userAge" /><br>
+equivalent to<br>
+&lt;comp :value=&quot;username&quot; :age=&quot;userAge&quot; @update:name=&quot;val =&gt; userName = val&quot; @update:age=&quot;val =&gt; userAge = val&quot; /&gt;</p>
+<p>v-model<br>
+<comp v-model="userName" /><br>
+equivalent to<br>
+&lt;comp :value=&quot;username&quot; @input=&quot;val =&gt; username = val&quot; /&gt;</p>
+<p>Sync can bind multiple properties other than a single value property, uses @update rather than @input</p>
+<h1 id="indexvue-created的时候做了什么">Index.vue created的时候做了什么</h1>
+<ol>
+<li>自定义一些全局方法(loading,toast,showActionSheet,setCacheView)</li>
+<li>启动逻辑<br>
+2.1 如果是APP<br>
+-&gt;如果是home页；<br>
+-&gt;-&gt;如果APP首次启动（S_APP_LAUNCH为1，部分场景会导致index.vue被重新created了，我们只希望以下逻辑只执行一遍，所以需要做判断），$.trust.onAppLaunch清理缓存，checkpriagreement-&gt;PrivacyService.check检查隐私协议并弹窗-&gt;检查新手引导并弹窗<br>
+-&gt;-&gt;不管是不是首次启动，SafeOperation.firstPreVerify (检查指纹/手势登录：注册“下次打开APP（重启APP或进入后台时间过长导致重启）清空登录信息”，注册记录进入后台和进入前台时间，未登录则要求指纹/手势验证)，queryAppConfigs（查询并储存网关配置的APP配置）<br>
+-&gt;任何页面；<br>
+-&gt;-&gt;如果是index页:监听登录广播并清空dialog(原因，其他页面在未登录时dialog提醒，登录后需要把之前这些dialog给清除掉，通过置0时间戳signal,为0时watch会dialog.show = false),开启enableTabCheckLogin(筛选出needLogin的tab页,tab切换时,检查该页是否属于needLogin tabs,需要且未登录则跳转LOGIN,否则正常路由)<br>
+2.2 如果不是APP:<br>
+queryAppConfigs,开启enableTabCheckLogin(功能描述详见2.1)<br>
+<img src="https://zssanguo.com/notebook//post-images/1619161653514.png" alt="" loading="lazy"></li>
+<li>登录预检permission.checkAfterLogin<br>
+web则在router.afterEach监听，APP则在Light.on('viewappear')监听，根据是否存在PRECHECK预检标签判断是否预检过，没有则callback运行步骤4，仅运行一次（运行后PRECHECK标签删除）</li>
+<li>检查指纹手势登录SafeOperation.afterLoginVerify<br>
+根据S_NOTIFYFPGL标签判断是否需要提示开启指纹手势登录，如果需要提示并且硬件支持&amp;用户没有开启过(getSafeOperation&amp;getSafeStatus)，则setSafeOperation(开启指纹/手势弹窗及调用原生方法),结束后callback运行步骤5</li>
+<li>$.trust.checkInvestorStateAfterLogin检查投资者状态<br>
+风险问卷是否过期,合格投资者是否过期,审核是否通过等,有异常根据actionType跳转不同页面<br>
+<img src="https://zssanguo.com/notebook//post-images/1619161796173.jpg" alt="" loading="lazy"></li>
+</ol>
+<h1 id="原生中启动的一些逻辑">原生中启动的一些逻辑</h1>
+<p>配合上文步骤2的逻辑，原生启动时S_APP_LAUNCH置1，如果配置“下次启动清空登录信息”，则清空<br>
+Andriod下 WeexPlugins.java register:<br>
+<img src="https://zssanguo.com/notebook//post-images/1619162106053.png" alt="" loading="lazy"></p>
+<h1 id="如何正确获取设备高度">如何正确获取设备高度</h1>
+<p>设备高度可以取weex.config.env</p>
+<pre><code>platform	String	Current running platform, could be &quot;Android&quot;, &quot;iOS&quot; or &quot;Web&quot;.
+weexVersion	String	The version of Weex SDK.
+appName         String	Mobile app name or browser name.
+appVersion	String	The version of current app.
+osName          String	The OS name, could be &quot;Android&quot; or &quot;iOS&quot;.
+osVersion	String	The version of current OS.
+deviceModel	String	Mobile phone device model. (native only)
+deviceWidth	Number	Screen resolution width.
+deviceHeight	Number	Screen resolution height.
+</code></pre>
+<p>组件相对位置可以取weex.requireModule('dom').getComponentRect(this.$refs.component)</p>
+<pre><code>{
+  result: true,
+  size: {
+    bottom: 60,
+    height: 15,
+    left: 0,
+    right: 353,
+    top: 45,
+    width: 353
+  }
+}
+</code></pre>
+<p>weex在不同设备的缩放比scale是不一样的，所以取实际高度时需要除以scale<br>
+deviceHeight = deviceHeight / scale</p>
+<h1 id="vuefilter-thisoptionsfilters">Vue.filter &amp; this.$options.filters</h1>
+<p>一般filter都是在template中以pipeline形式使用。当我们想在script中使用filter时，我们可以使用this.$options.filters（本地与全局定义Vue.filter或者mixin混入Vue.mixin({filters: {}})都可以使用），可以在component方法(methods, computed)和lifecycle方法(created，mounted)等场景使用。</p>
+<pre><code>filters: {
+    imgSrc (path) {
+        return  $.config.appBaseUrl + 'productFile/getFtpImg.json?filePath=' + encodeURIComponent(path)
+    }
+},
+computed: {
+    imageList () {
+        return this.record.activity_picurl_detail.map((it) =&gt; ({ src: this.$options.filters.imgSrc(it) }))
+    }
+},
+</code></pre>
+<h1 id="array-一些方法">array 一些方法</h1>
+<p>array.map() 遍历生成新数组(对原数组的所有元素进行mutate,不能remove element,如果需要新数组除掉原数组的部分元素,考虑array.filter().map()，或者array.reduce(性能差点))</p>
+<pre><code>let newArray = array.map((item) =&gt; ({ value: item.name }));
+</code></pre>
+<p>array.find() 可以用来找array of objects</p>
+<pre><code>let obj = array.find( ({ name }) =&gt; name === 'abc' );
+</code></pre>
+<p>array.reduce() 遍历根据reducer方法累积,然后输出到initialValue里</p>
+<pre><code>//currentIndex, array和initialValue选填
+arr.reduce(callback( accumulator, currentValue, currentIndex, array), initialValue)
+//遍历array of objects
+let obj = array.reduce( (accumulator, currentValue) =&gt; accumulator.concat(currentValue), []);
+</code></pre>
+<p>array.sort(compareFunction(a,b)) 也可用来sort array of objects</p>
+<pre><code>如果compareFunction(a,b) return &gt; 0, sort b before a
+array.sort((a, b) =&gt; a - b);
+</code></pre>
+<h1 id="call-apply-bind">call, apply, bind</h1>
+<p>call和apply直接调用函数<br>
+call用,隔开参数 obj.myFun.call(db, '123', 'abc')<br>
+apply用array传参 obj.myFun.apply(db, ['123', 'abc'])<br>
+bind返回的是一个新函数,传参和call一样<br>
+var newFunction = obj.myFun.bind(db, '123', 'abc');<br>
+调用: obj.myFun.bind(db, '123', 'abc')();</p>
+<h1 id="通用拦截判断-permissioncheck">通用拦截判断 permission.check</h1>
+<p>如果在页面跳转时报错或者跳转到了登录，且发现当前页面和目标页面都没有该逻辑判断，很有可能是在init.js改写的hsopen中发生的，这里判断了permission.check。</p>
+<h2 id="visitconfig-对一些页面的权限进行了限制">visitConfig 对一些页面的权限进行了限制：</h2>
+<p>比如：'^rewards/rewards-': 'PS'   //PS代表个人<br>
+意思是rewards旗下页面只有个人权限可以访问，机构用户下，发现页面不展示积分商城rewards-market</p>
+<h2 id="checkrole-对用户状态进行了限制">checkRole 对用户状态进行了限制</h2>
+<p>调用checkCustInfo并对checkResult中的各个flag进行判断<br>
+比如：checkResult.hgflagNotExpired（HGNE 合格投资者未过期），过期则将对应的HGNE flag加入到checkPass里(checkPass.push('HGNE'))，并返回error(checkPass, jsonResult);<br>
+init.js在permission.check返回error的情况下调用$.trust.checkInvestorState()，用于页面跳转时权限拦截，针对投资者状态，showDialog不同的提示，并hsopen跳转到对应认证或修改信息页面</p>
+<h2 id="safeoperationverify-未登录则指纹面容手势验证或跳转登录页">SafeOperation.verify 未登录则指纹/面容/手势验证或跳转登录页</h2>
+<p>调用SafeOperation.verify 进行指纹/面容/手势等验证，如果没问题，则通过callNative调用相应的原生验证方法。如果没有开启指纹/面容认证或者认证失败了，会triggerLogout并直接hsopen到LOGIN页面或者next()回调，回调也会next到LOGIN页面<br>
+条件1：如果找到了visitConfig里该页面的role权限，但是检测到未登录状态<br>
+条件2：如果该页没有定role权限，页面路径是LOGIN（应对其他的check导致hsopen(LOGIN)的情况。比如我们在hsopen('blahblah')时check导致了hsopen(LOGIN),这时会进入条件2）</p>
+<h2 id="reporterjs-和环境信息管理系统">reporter.js 和环境信息管理系统</h2>
+<p>reporter.js重定义了 Vue.prototype.$throw。会调用handleError -&gt; collectJsError -&gt; $.http.post （最终post到环境信息管理系统）。不方便原生弹窗报错的话，可以用throw方法， 将报错信息post到环境信息管理系统方便查看。<br>
+<img src="https://zssanguo.com/notebook//post-images/1619074196996.png" alt="" loading="lazy"><br>
+post到这里<br>
+<img src="https://zssanguo.com/notebook//post-images/1619074244076.png" alt="" loading="lazy"></p>
+<p>在http://192.168.70.249:9000/sensorslog 上查看<br>
+<img src="https://zssanguo.com/notebook//post-images/1619074289636.png" alt="" loading="lazy"></p>
+<p>如何自己搭建<br>
+https://git01.hundsun.com/xiaqj19255/pem</p>
+]]></content>
+    </entry>
+</feed>
