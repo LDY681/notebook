@@ -2,17 +2,18 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>!! typeof undefined null | 刘大钰</title>
+<title>192.168.137.1 打不开 | 刘大钰</title>
 <link rel="shortcut icon" href="https://zssanguo.com/notebook//favicon.ico?v=1622775086884">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zssanguo.com/notebook//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="!! typeof undefined null | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
+<link rel="alternate" type="application/atom+xml" title="192.168.137.1 打不开 | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="
-..." />
+    <meta name="description" content="localhost和127.0.0.1都可以访问，就192.168.137.1不行
+192.168.137.1是什么IP？
+virtual network adapter的IP，virtual network adaptor用于让多个设备连..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -67,21 +68,32 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              !! typeof undefined null
+              192.168.137.1 打不开
             </h2>
             <div class="post-info">
               <span>
-                2021-04-08
+                2021-06-04
               </span>
               <span>
-                0 min read
+                1 min read
               </span>
               
             </div>
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <figure data-type="image" tabindex="1"><img src="https://zssanguo.com/notebook//post-images/1617845514394.png" alt="" loading="lazy"></figure>
+                <p>localhost和127.0.0.1都可以访问，就192.168.137.1不行</p>
+<p>192.168.137.1是什么IP？<br>
+virtual network adapter的IP，virtual network adaptor用于让多个设备连接到一个局域网local area network (LAN)，然后连接上的设备可以通过该台搭载virtual network adaptor的设备去访问局域网的内容和访问到外网等。</p>
+<p>192.168.137.1为什么打不开？<br>
+ipconfig /all打印出来<br>
+局域网适配器Local Area Connection都是媒体已断开连接<br>
+没有IPv4 地址是192.168.137.1的选项</p>
+<p>route print打印出来<br>
+活跃路由也没有192.168.137.1</p>
+<p>不知道是不是因为开了VPN冲突了还是什么情况</p>
+<p>最最最最最简单的FIX<br>
+移动热点关掉重新打开(ˉ▽ˉ；)...</p>
 
               </div>
               <div class="toc-container">
@@ -94,9 +106,9 @@
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://zssanguo.com/notebook/post/dian-zi-he-tong-liu-cheng-shu-li/">
+            <a href="https://zssanguo.com/notebook/post/scaffold/">
               <h3 class="post-title">
-                电子合同流程梳理
+                scaffold
               </h3>
             </a>
           </div>
