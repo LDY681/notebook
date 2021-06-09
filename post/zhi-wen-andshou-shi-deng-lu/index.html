@@ -2,18 +2,20 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>组件v-on directive中使用Lifecycle hook | 刘大钰</title>
+<title>指纹&amp;手势登录 | 刘大钰</title>
 <link rel="shortcut icon" href="https://zssanguo.com/notebook//favicon.ico?v=1623209200984">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zssanguo.com/notebook//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="组件v-on directive中使用Lifecycle hook | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
+<link rel="alternate" type="application/atom+xml" title="指纹&amp;手势登录 | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="&lt;component @hook:mounted=&quot;onComponentMounted()&quot; &gt;
-通过在组件上添加v-on directive，在不侵入子组件的情况下，执行父组件的函数
-原因：组件内的生命周..." />
+    <meta name="description" content="其他的还没仔细看，回头再写。
+先理一下saveSafeOperation,S_LOGINACCOUNT,S_APP_SPEC_TOKEN这几个
+手机号注册,绑定指纹，杀掉进程后，重新进入没有提示指纹登录
+问题原因
+保存用户安全认证情况sav..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -68,11 +70,11 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              组件v-on directive中使用Lifecycle hook
+              指纹&amp;手势登录
             </h2>
             <div class="post-info">
               <span>
-                2021-04-15
+                2021-06-09
               </span>
               <span>
                 1 min read
@@ -82,11 +84,21 @@
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p>&lt;component @hook:mounted=&quot;onComponentMounted()&quot; &gt;</component><br>
-通过在组件上添加v-on directive，在不侵入子组件的情况下，执行父组件的函数<br>
-原因：组件内的生命周期函数在执行结束后会 $emit 一个 hook + 生命周期名字 的自定义事件</p>
-<p>程序化的事件侦听器<br>
-https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%9A%84%E4%BA%8B%E4%BB%B6%E4%BE%A6%E5%90%AC%E5%99%A8</p>
+                <p>其他的还没仔细看，回头再写。</p>
+<p>先理一下saveSafeOperation,S_LOGINACCOUNT,S_APP_SPEC_TOKEN这几个</p>
+<p>手机号注册,绑定指纹，杀掉进程后，重新进入没有提示指纹登录<br>
+问题原因<br>
+保存用户安全认证情况saveSafeOperation方法：<br>
+通过getUserAccount获取用户信息(S_LOGINACCOUNT)，然后获取用户信息的accountNo<br>
+然后以accountNo作为key保存认证token到S_APP_SPEC_TOKEN缓存中</p>
+<p>以上情况是因为首次注册登录后，<br>
+S_LOGINACCOUNT用户信息里没有accountNo<br>
+{&quot;accountType&quot;:&quot;0&quot;,&quot;sex&quot;:&quot;&quot;,&quot;custName&quot;:&quot;游客_5869&quot;}</p>
+<p>所以注册后第一次认证指纹，实际没有把安全认证情况保留下来<br>
+(S_APP_SPEC_TOKEN里就没保存进新手机号的token!!!!)</p>
+<p>解决办法：<br>
+我们看到注册后会执行saveLoginInfoAfterRegister,<br>
+这里将手机号传入，然后将S_LOGINACCOUNT的accountNo设置为该手机号，排查后发现手机号是undefined。。。改了下传参，成功修复啦</p>
 
               </div>
               <div class="toc-container">
@@ -99,9 +111,9 @@ https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E7%A8%8B%E5%BA%8F%E5%8
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://zssanguo.com/notebook/post/duo-ceng-de-promise-return/">
+            <a href="https://zssanguo.com/notebook/post/cun-chu-guo-cheng-diao-shi/">
               <h3 class="post-title">
-                多层的Promise return
+                存储过程调试
               </h3>
             </a>
           </div>
