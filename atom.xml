@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zssanguo.com/notebook/</id>
     <title>刘大钰</title>
-    <updated>2021-06-09T06:02:43.752Z</updated>
+    <updated>2021-06-15T03:38:48.924Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zssanguo.com/notebook/"/>
     <link rel="self" href="https://zssanguo.com/notebook/atom.xml"/>
@@ -10,6 +10,35 @@
     <logo>https://zssanguo.com/notebook/images/avatar.png</logo>
     <icon>https://zssanguo.com/notebook/favicon.ico</icon>
     <rights>All rights reserved 2021, 刘大钰</rights>
+    <entry>
+        <title type="html"><![CDATA[旷视活体方案理解]]></title>
+        <id>https://zssanguo.com/notebook/post/kuang-shi-huo-ti-fang-an-li-jie/</id>
+        <link href="https://zssanguo.com/notebook/post/kuang-shi-huo-ti-fang-an-li-jie/">
+        </link>
+        <updated>2021-06-15T03:00:53.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="第一遍获取token活体识别前">第一遍获取token(活体识别前)</h1>
+<p>https://faceid.com/pages/documents/37661898</p>
+<h2 id="实名认证更新证件有效期走-comparison_type-1-kyc认证">实名认证,更新证件有效期走 comparison_type =1 KYC认证</h2>
+<p>要求必传idcard_name和idcard_number 身份证姓名和身份证号<br>
+身份证的idcard_name和idcard_number，前端通过OCR时获取并传参<br>
+非身份证则前端不传，由网关配置默认信息并补传<br>
+<img src="https://zssanguo.com/notebook//post-images/1623726409654.png" alt="" loading="lazy"></p>
+<h2 id="合同签署走comparison_type-0-人脸比对">合同签署走comparison_type =0 人脸比对</h2>
+<p>要求必传image_ref 人脸图片<br>
+人脸图片在&quot;实名认证&amp;更新证件有效期&quot;的活体识别后会上传并保存在网关<br>
+如果没有现有人脸图片，则跳转更新证件信息并引导活体<br>
+由网关获取现有人脸图片并传参</p>
+<h1 id="第二遍验证token活体识别并拿到活体数据后">第二遍验证token（活体识别并拿到活体数据后）</h1>
+<p>https://faceid.com/pages/documents/37662519<br>
+要求必传biz_token和meglive_data<br>
+biz_token为第一遍时获取token，meglive_data为活体识别拿到的活体数据</p>
+<p>sign和sign_version<br>
+sign好像由原生和网关处理掉了，现在的逻辑是，当没有biz_token时（身份证），生成sign并传给前<br>
+端，前端在验证token时加传sign。（？）</p>
+<p>验证成功后返回image_best活体照片进行FTP上传保存<br>
+非身份证会返回报错2000：表示比对完成，活体验证通过，但待比对照片与参考照片，或参考照片中的至少一张，不是同一个人。因为我们非身份证是网关配置的假默认信息补传的，这种情况算成功。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[指纹&手势登录]]></title>
         <id>https://zssanguo.com/notebook/post/zhi-wen-andshou-shi-deng-lu/</id>
@@ -270,79 +299,6 @@ contract_status为1（有合同查询交易申请）：getApplyInfo-&gt;querySav
 queryCapitalStatus-&gt;historyService.queryTradeInfoList获取交款信息，capital_status状态为3已交款就隐藏缴款引导</p>
 <p>Contract-liveface（底下的loading时不显示的）<br>
 liveface-guide，onclick时startLiveface，会检测buss_flag为2是签署电子合同，调用getLiveToken-&gt;livefaceService.verifyFac-&gt;account/account/verifyFaceId获取biz_token，传参biz_token回调进行人脸识别this.liveface-&gt;livefaceService.liveDetection-&gt;LightSDK.native.callNative(&quot;livestill.startLiveStill&quot;)，成功后emit(“livefaceNext”)。然后contract-liveface在onLivefaceNext时会addContractOrConfirmPdf进行同contract-confirm的电子合同签署</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[原生拓展能力梳理]]></title>
-        <id>https://zssanguo.com/notebook/post/native/</id>
-        <link href="https://zssanguo.com/notebook/post/native/">
-        </link>
-        <updated>2021-03-30T07:28:51.000Z</updated>
-        <content type="html"><![CDATA[<p>项目里如何调原生方法<br>
-LightSDK.native.callNative(key, cb) - 通用，可调用原生拓展方法<br>
-LightSDK.native.methodName(key, cb) - 仅调用原生内置方法</p>
-<p>调用原生内置方法可以直接通过LightSDK.native.methodName()是因为node_modules/light-sdk/lib/native.js里封装了这些方法，本质上和callNative()一样是调用的bridge.call(method, params, cb)</p>
-<p>拓展原生能力</p>
-<ol>
-<li>APP项目里拓展新project&amp;方法：</li>
-</ol>
-<pre><code>// ${projectName}/src/main/java/com/hundsun/${projectName}/JSAPI/LightJSAPI.java
-public class LightJSAPI implements interfaceName {
-    public void methodName(){
-        //blah blah blah
-    }
-}
-</code></pre>
-<p>案例：</p>
-<ul>
-<li>LightSDK.native.callNative(&quot;common.openCameraOrPhoto&quot;)是调用Andriod\src\main\java\com\hundsun\common\JSAPI\LightJSAPI.java里的openCameraOrPhoto()</li>
-<li>LightSDK.native.callNative(&quot;video_rec.video&quot;)是调用Andriod\video_rec\src\main\java\com\hundsun\video_rec\JSAPI\LightJSAPI.java里的video()</li>
-</ul>
-<p>build.gradle最终将拓展库和原生库(xxx.arr格式引用在libs下)打包到一起<br>
-拓展库：<br>
-<code>implementation project(path: ':filegmu') //PDF 阅读</code><br>
-原生库：<br>
-<code>implementation(name: 'jsnativegmu', ext: 'aar') //JSNative容器库</code></p>
-<ol start="2">
-<li>拓展weex module</li>
-</ol>
-<ul>
-<li>创建dialog module (src\main\java\com\hundsun\extend\module\WXDialogModule.java)</li>
-</ul>
-<pre><code>public class WXDialogModule extends WXModule {
-  //blah blah blah
-}
-</code></pre>
-<ul>
-<li>在WeexPlugins中注册（src\main\java\com\hundsun\extend\WeexPlugins.java）</li>
-</ul>
-<pre><code>WXSDKEngine.registerModule(&quot;dialog&quot;, WXDialogModule.class);
-</code></pre>
-<ul>
-<li>在h5项目中使用：</li>
-</ul>
-<pre><code>weex.requireModule(&quot;dialog&quot;)
-</code></pre>
-<ol start="3">
-<li>拓展weex 组件</li>
-</ol>
-<ul>
-<li>创建shadowview组件(src\main\java\com\hundsun\extend\components\WXShadowViewComponent.java):</li>
-</ul>
-<pre><code>public class WXShadowViewComponent extends WXVContainer&lt;ShadowLayout&gt; {
-  //blah blah blah
-}
-</code></pre>
-<ul>
-<li>在WeexPlugins中注册（src\main\java\com\hundsun\extend\WeexPlugins.java）</li>
-</ul>
-<pre><code>WXSDKEngine.registerComponent(&quot;shadow-view&quot;, WXShadowViewComponent.class, false);
-</code></pre>
-<ul>
-<li>在h5项目中使用(不用require，直接可用)：</li>
-</ul>
-<pre><code>&lt;component :style=&quot;shadowStyle&quot; :is=&quot;isAndroid?'shadow-view':'div'&quot;&gt;&lt;/component&gt;
-</code></pre>
 ]]></content>
     </entry>
 </feed>
