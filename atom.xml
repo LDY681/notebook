@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zssanguo.com/notebook/</id>
     <title>刘大钰</title>
-    <updated>2021-06-15T03:38:48.924Z</updated>
+    <updated>2021-06-18T10:52:28.343Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zssanguo.com/notebook/"/>
     <link rel="self" href="https://zssanguo.com/notebook/atom.xml"/>
@@ -10,6 +10,58 @@
     <logo>https://zssanguo.com/notebook/images/avatar.png</logo>
     <icon>https://zssanguo.com/notebook/favicon.ico</icon>
     <rights>All rights reserved 2021, 刘大钰</rights>
+    <entry>
+        <title type="html"><![CDATA[[TODO]组件prop，具名作用域插槽，v-bind="$attrs"，v-on="$listeners" ]]></title>
+        <id>https://zssanguo.com/notebook/post/todozu-jian-propju-ming-zuo-yong-yu-cha-cao-v-binddollarattrsv-ondollarlisteners/</id>
+        <link href="https://zssanguo.com/notebook/post/todozu-jian-propju-ming-zuo-yong-yu-cha-cao-v-binddollarattrsv-ondollarlisteners/">
+        </link>
+        <updated>2021-06-18T08:57:33.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="vue-prop父组件给子组件传参和作用域插槽子组件给父组件的插槽传参">Vue prop(父组件给子组件传参)和作用域插槽(子组件给父组件的插槽传参)</h1>
+<p><strong>Vue prop:</strong><br>
+Array和Object的default要向data一样用return的方式initialize<br>
+如果父组件绑定在子组件的变量发生更新，子组件通过watch方式检测变化然后进行改动<br>
+prop属性名要用kebab-case,因为html不区分大小写</p>
+<pre><code>//父组件
+&lt;sFundhisflot1
+    :adjust-info=&quot;adjustInfo&quot;   //kebab-case
+&gt;&lt;/sFundhisflot1&gt;
+
+//子组件
+props: {
+    adjustInfo: {   //object和array都要用return的方式initialize default
+        default: () =&gt; [],
+        type: Array
+    }
+},
+watch: {
+    adjustInfo(newVal) {    //watch来检测父组件的adjustInfo的变化
+        //do somthing
+    }
+},
+</code></pre>
+<p><strong>作用域插槽:</strong><br>
+父组件想让子组件的slot显示子组件的user对象的的firstName属性，但是父组件无法直接访问子组件的数据。那么子组件一个将 user 作为 <slot> 元素的 attribute 绑定上去，让 user 在父级的插槽内容中可用</p>
+<pre><code>    //父组件
+    具名插槽v-slot:firstName（template内容插到子组件的&lt;slot name=&quot;firstName&quot; /&gt;）
+    作用域插槽v-slot:firstName=&quot;slotProps&quot;（firstName插槽里v-bind的props可以在父组件通过slotProps访问），可以简写成#firstName=&quot;slotProps&quot;
+    &lt;current-user&gt;
+        &lt;template v-slot:firstName=&quot;slotProps&quot;&gt;
+            {{ slotProps.user.firstName }}
+        &lt;/template&gt;
+    &lt;/current-user&gt;
+
+    //子组件，通过在slot上添加v-bind将user传给给父组件
+    &lt;span&gt;
+        &lt;slot name=&quot;firstName&quot; v-bind:user=&quot;user&quot;&gt;&lt;/slot&gt;
+    &lt;/span&gt;
+</code></pre>
+<h1 id="v-bindattrs-v-onlisteners-多层组件透传">v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi>v</mi><mo>−</mo><mi>o</mi><mi>n</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot; v-on=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>listeners&quot; 多层组件透传</h1>
+<p>将在高层组件v-on上注册的事件监听，和v-bind的没有被中层props吃掉的attrs，一步步往下探<br>
+比如<h-textfield-advance></h-textfield-advance><br>
+// TODO<br>
+https://www.cnblogs.com/jin-zhe/p/13099416.html</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[旷视活体方案理解]]></title>
         <id>https://zssanguo.com/notebook/post/kuang-shi-huo-ti-fang-an-li-jie/</id>
@@ -33,8 +85,7 @@
 要求必传biz_token和meglive_data<br>
 biz_token为第一遍时获取token，meglive_data为活体识别拿到的活体数据</p>
 <p>sign和sign_version<br>
-sign好像由原生和网关处理掉了，现在的逻辑是，当没有biz_token时（身份证），生成sign并传给前<br>
-端，前端在验证token时加传sign。（？）</p>
+sign由网关处理掉了，为了防止越权</p>
 <p>验证成功后返回image_best活体照片进行FTP上传保存<br>
 非身份证会返回报错2000：表示比对完成，活体验证通过，但待比对照片与参考照片，或参考照片中的至少一张，不是同一个人。因为我们非身份证是网关配置的假默认信息补传的，这种情况算成功。</p>
 ]]></content>
@@ -267,38 +318,6 @@ getContractFileUrl () {
         </link>
         <updated>2021-04-08T01:31:34.000Z</updated>
         <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://zssanguo.com/notebook//post-images/1617845514394.png" alt="" loading="lazy"></figure>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[电子合同流程梳理]]></title>
-        <id>https://zssanguo.com/notebook/post/dian-zi-he-tong-liu-cheng-shu-li/</id>
-        <link href="https://zssanguo.com/notebook/post/dian-zi-he-tong-liu-cheng-shu-li/">
-        </link>
-        <updated>2021-03-30T08:37:57.000Z</updated>
-        <content type="html"><![CDATA[<p>trade-history<br>
-在当tradeInfo.operate_type是A3时根据电子合同的状态tradeInfo.contract_status是否为1决定进入contract-confirm确认合同，否则进入contract-apply补充信息。</p>
-<p>contract-apply<br>
-查询queryCustInfo并将身份信息填充，查询queryTrustBankCardInfo并将合同信息填充。<br>
-银行卡部分只显示鉴权银行卡，并且当只有1张时默认选择第一张，手机号用了CryptoJS将mobileno_internet_en解密成正常手机号。<br>
-非银行卡补充信息用的pop-picker，点击时触发onPicker(name),根据name匹配不同的字典（字典queryDict时查询了性别，职业，国籍生成dictMap），onPicker在pick里（pop-picker里）会根据value计算selectedValue（value不存在即首次打开未选择时默认为0，否则为选择值）并以此setSelectedIndex(picker里)，然后设置finsihCb，再完成后finishSelectCycle中触发回调。回调中将选择的index设置到pickerIndexMap[name]里并更新contractInfo。<br>
-银行卡用的pop-view。pop-view里为bank-info组件的数组和添加银行卡按钮，添加银行卡在完成后hsback三级回到contract-apply页面,选择银行卡onSelectedCard会将银行卡信息存在selectedCard里<br>
-下一步时会校验contractInfo和selectedCard并跳转到contract-confirm</p>
-<p>contract-confirm<br>
-查询个人信息queryCustInfo、查询交易流水queryTradeFlow、获取上一步补充信息：<br>
-contract_status为1（有合同查询交易申请）：getApplyInfo-&gt;querySavedContract-&gt; queryPurchaseApply<br>
-否则getApplyInfo-&gt; getApplyContract-&gt; queryContractForm查询合同交易表单)<br>
-然后将个人信息，交易流水和申请信息填充<br>
-同意签署onSubmit -&gt; jumpNext：<br>
-如果身份证且开启人脸识别，contract-liveface<br>
-否则以PDF签署，打开PDF预览回调后会打开contract-sign。addContractOrConfirmPdf-&gt;confirmPdf-&gt; openPdf-&gt; previewFileWithConfirm-&gt;goSignCA()</p>
-<p>Contract-sign<br>
-通过短信验证码确认签署<br>
-发送短信验证码getCode-&gt; contractService.sendcode，countdown-button用的button组件，如果isCountDowning屏蔽onclick的sendSmsCode（直接return）并颜色为灰色。<br>
-填写验证码verify-code组件 oncomplete时触发validateCode-&gt;contractService.sign，30秒后跳转contract-result</p>
-<p>Contract-result<br>
-queryCapitalStatus-&gt;historyService.queryTradeInfoList获取交款信息，capital_status状态为3已交款就隐藏缴款引导</p>
-<p>Contract-liveface（底下的loading时不显示的）<br>
-liveface-guide，onclick时startLiveface，会检测buss_flag为2是签署电子合同，调用getLiveToken-&gt;livefaceService.verifyFac-&gt;account/account/verifyFaceId获取biz_token，传参biz_token回调进行人脸识别this.liveface-&gt;livefaceService.liveDetection-&gt;LightSDK.native.callNative(&quot;livestill.startLiveStill&quot;)，成功后emit(“livefaceNext”)。然后contract-liveface在onLivefaceNext时会addContractOrConfirmPdf进行同contract-confirm的电子合同签署</p>
 ]]></content>
     </entry>
 </feed>

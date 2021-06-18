@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>旷视活体方案理解 | 刘大钰</title>
-<link rel="shortcut icon" href="https://zssanguo.com/notebook//favicon.ico?v=1623728326549">
+<link rel="shortcut icon" href="https://zssanguo.com/notebook//favicon.ico?v=1624013536080">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zssanguo.com/notebook//styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="旷视活体方案理解 | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
@@ -24,7 +24,7 @@ https://faceid.com/pages/documents/37661898
       <div class="main-content">
         <div class="site-header">
   <a href="https://zssanguo.com/notebook/">
-  <img class="avatar" src="https://zssanguo.com/notebook//images/avatar.png?v=1623728326549" alt="">
+  <img class="avatar" src="https://zssanguo.com/notebook//images/avatar.png?v=1624013536080" alt="">
   </a>
   <h1 class="site-title">
     刘大钰
@@ -100,8 +100,7 @@ https://faceid.com/pages/documents/37661898
 要求必传biz_token和meglive_data<br>
 biz_token为第一遍时获取token，meglive_data为活体识别拿到的活体数据</p>
 <p>sign和sign_version<br>
-sign好像由原生和网关处理掉了，现在的逻辑是，当没有biz_token时（身份证），生成sign并传给前<br>
-端，前端在验证token时加传sign。（？）</p>
+sign由网关处理掉了，为了防止越权</p>
 <p>验证成功后返回image_best活体照片进行FTP上传保存<br>
 非身份证会返回报错2000：表示比对完成，活体验证通过，但待比对照片与参考照片，或参考照片中的至少一张，不是同一个人。因为我们非身份证是网关配置的假默认信息补传的，这种情况算成功。</p>
 

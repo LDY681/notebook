@@ -1,0 +1,207 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>[TODO]组件prop，具名作用域插槽，v-bind=&#34;$attrs&#34;，v-on=&#34;$listeners&#34;  | 刘大钰</title>
+<link rel="shortcut icon" href="https://zssanguo.com/notebook//favicon.ico?v=1624013536080">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zssanguo.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="[TODO]组件prop，具名作用域插槽，v-bind=&#34;$attrs&#34;，v-on=&#34;$listeners&#34;  | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Vue prop(父组件给子组件传参)和作用域插槽(子组件给父组件的插槽传参)
+Vue prop:
+Array和Object的default要向data一样用return的方式initialize
+如果父组件绑定在子组件的变量发生更新，子组..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zssanguo.com/notebook/">
+  <img class="avatar" src="https://zssanguo.com/notebook//images/avatar.png?v=1624013536080" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              [TODO]组件prop，具名作用域插槽，v-bind=&#34;$attrs&#34;，v-on=&#34;$listeners&#34; 
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-06-18
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="vue-prop父组件给子组件传参和作用域插槽子组件给父组件的插槽传参">Vue prop(父组件给子组件传参)和作用域插槽(子组件给父组件的插槽传参)</h1>
+<p><strong>Vue prop:</strong><br>
+Array和Object的default要向data一样用return的方式initialize<br>
+如果父组件绑定在子组件的变量发生更新，子组件通过watch方式检测变化然后进行改动<br>
+prop属性名要用kebab-case,因为html不区分大小写</p>
+<pre><code>//父组件
+&lt;sFundhisflot1
+    :adjust-info=&quot;adjustInfo&quot;   //kebab-case
+&gt;&lt;/sFundhisflot1&gt;
+
+//子组件
+props: {
+    adjustInfo: {   //object和array都要用return的方式initialize default
+        default: () =&gt; [],
+        type: Array
+    }
+},
+watch: {
+    adjustInfo(newVal) {    //watch来检测父组件的adjustInfo的变化
+        //do somthing
+    }
+},
+</code></pre>
+<p><strong>作用域插槽:</strong><br>
+父组件想让子组件的slot显示子组件的user对象的的firstName属性，但是父组件无法直接访问子组件的数据。那么子组件一个将 user 作为 <slot> 元素的 attribute 绑定上去，让 user 在父级的插槽内容中可用</p>
+<pre><code>    //父组件
+    具名插槽v-slot:firstName（template内容插到子组件的&lt;slot name=&quot;firstName&quot; /&gt;）
+    作用域插槽v-slot:firstName=&quot;slotProps&quot;（firstName插槽里v-bind的props可以在父组件通过slotProps访问），可以简写成#firstName=&quot;slotProps&quot;
+    &lt;current-user&gt;
+        &lt;template v-slot:firstName=&quot;slotProps&quot;&gt;
+            {{ slotProps.user.firstName }}
+        &lt;/template&gt;
+    &lt;/current-user&gt;
+
+    //子组件，通过在slot上添加v-bind将user传给给父组件
+    &lt;span&gt;
+        &lt;slot name=&quot;firstName&quot; v-bind:user=&quot;user&quot;&gt;&lt;/slot&gt;
+    &lt;/span&gt;
+</code></pre>
+<h1 id="v-bindattrs-v-onlisteners-多层组件透传">v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi>v</mi><mo>−</mo><mi>o</mi><mi>n</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot; v-on=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>listeners&quot; 多层组件透传</h1>
+<p>将在高层组件v-on上注册的事件监听，和v-bind的没有被中层props吃掉的attrs，一步步往下探<br>
+比如<h-textfield-advance></h-textfield-advance><br>
+// TODO<br>
+https://www.cnblogs.com/jin-zhe/p/13099416.html</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#vue-prop%E7%88%B6%E7%BB%84%E4%BB%B6%E7%BB%99%E5%AD%90%E7%BB%84%E4%BB%B6%E4%BC%A0%E5%8F%82%E5%92%8C%E4%BD%9C%E7%94%A8%E5%9F%9F%E6%8F%92%E6%A7%BD%E5%AD%90%E7%BB%84%E4%BB%B6%E7%BB%99%E7%88%B6%E7%BB%84%E4%BB%B6%E7%9A%84%E6%8F%92%E6%A7%BD%E4%BC%A0%E5%8F%82">Vue prop(父组件给子组件传参)和作用域插槽(子组件给父组件的插槽传参)</a></li>
+<li><a href="#v-bindattrs-v-onlisteners-%E5%A4%9A%E5%B1%82%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0">v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi>v</mi><mo>−</mo><mi>o</mi><mi>n</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot; v-on=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>listeners&quot; 多层组件透传</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zssanguo.com/notebook/post/kuang-shi-huo-ti-fang-an-li-jie/">
+              <h3 class="post-title">
+                旷视活体方案理解
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://zssanguo.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
