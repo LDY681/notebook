@@ -2,19 +2,19 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>[TODO]组件prop，具名作用域插槽，v-bind=&#34;$attrs&#34;，v-on=&#34;$listeners&#34;  | 刘大钰</title>
-<link rel="shortcut icon" href="https://zssanguo.com/notebook//favicon.ico?v=1624331045131">
+<title>prop，具名作用域插槽，多层组件attr和listener透传， | 刘大钰</title>
+<link rel="shortcut icon" href="https://zssanguo.com/notebook//favicon.ico?v=1624344390299">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zssanguo.com/notebook//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="[TODO]组件prop，具名作用域插槽，v-bind=&#34;$attrs&#34;，v-on=&#34;$listeners&#34;  | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
+<link rel="alternate" type="application/atom+xml" title="prop，具名作用域插槽，多层组件attr和listener透传， | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="Vue prop(父组件给子组件传参)和作用域插槽(子组件给父组件的插槽传参)
+    <meta name="description" content="Vue prop(父组件给子组件传参)和作用域插槽(子组件环境可在父组件的插槽内用)
 Vue prop:
 Array和Object的default要向data一样用return的方式initialize
-如果父组件绑定在子组件的变量发生更新，子组..." />
+如果父组件绑定在子组件的变量发生更新..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -24,7 +24,7 @@ Array和Object的default要向data一样用return的方式initialize
       <div class="main-content">
         <div class="site-header">
   <a href="https://zssanguo.com/notebook/">
-  <img class="avatar" src="https://zssanguo.com/notebook//images/avatar.png?v=1624331045131" alt="">
+  <img class="avatar" src="https://zssanguo.com/notebook//images/avatar.png?v=1624344390299" alt="">
   </a>
   <h1 class="site-title">
     刘大钰
@@ -69,21 +69,21 @@ Array和Object的default要向data一样用return的方式initialize
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              [TODO]组件prop，具名作用域插槽，v-bind=&#34;$attrs&#34;，v-on=&#34;$listeners&#34; 
+              prop，具名作用域插槽，多层组件attr和listener透传，
             </h2>
             <div class="post-info">
               <span>
                 2021-06-18
               </span>
               <span>
-                2 min read
+                5 min read
               </span>
               
             </div>
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <h1 id="vue-prop父组件给子组件传参和作用域插槽子组件给父组件的插槽传参">Vue prop(父组件给子组件传参)和作用域插槽(子组件给父组件的插槽传参)</h1>
+                <h1 id="vue-prop父组件给子组件传参和作用域插槽子组件环境可在父组件的插槽内用">Vue prop(父组件给子组件传参)和作用域插槽(子组件环境可在父组件的插槽内用)</h1>
 <p><strong>Vue prop:</strong><br>
 Array和Object的default要向data一样用return的方式initialize<br>
 如果父组件绑定在子组件的变量发生更新，子组件通过watch方式检测变化然后进行改动<br>
@@ -122,17 +122,76 @@ watch: {
         &lt;slot name=&quot;firstName&quot; v-bind:user=&quot;user&quot;&gt;&lt;/slot&gt;
     &lt;/span&gt;
 </code></pre>
-<h1 id="v-bindattrs-v-onlisteners-多层组件透传">v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi>v</mi><mo>−</mo><mi>o</mi><mi>n</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot; v-on=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>listeners&quot; 多层组件透传</h1>
-<p>将在高层组件v-on上注册的事件监听，和v-bind的没有被中层props吃掉的attrs，一步步往下探<br>
-比如<h-textfield-advance></h-textfield-advance><br>
-// TODO<br>
+<h1 id="v-bindattrs和v-bindpropsv-onlisteners-和native-多层组件透传">v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi mathvariant="normal">和</mi><mi>v</mi><mo>−</mo><mi>b</mi><mi>i</mi><mi>n</mi><mi>d</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot;和v-bind=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord cjk_fallback">和</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>props&quot;，v-on=&quot;$listeners&quot; 和.native 多层组件透传</h1>
+<p>将在高层组件v-on上注册的事件监听，和v-bind的没有被中间层识别(并获取)的属性和事件，一步步往下探，供底下的组件可用。如果中间层组件识别了事件和属性，该层可以使用这些事件和属性，但是下层就不能再用了。好处是不用props一层一层传了。</p>
+<p>v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi mathvariant="normal">：</mi><mi mathvariant="normal">父</mi><mi mathvariant="normal">组</mi><mi mathvariant="normal">件</mi><mi>t</mi><mi>a</mi><mi>g</mi><mi mathvariant="normal">上</mi><mi mathvariant="normal">绑</mi><mi mathvariant="normal">定</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">非</mi><mi>p</mi><mi>r</mi><mi>o</mi><mi>p</mi><mi>s</mi><mi mathvariant="normal">属</mi><mi mathvariant="normal">性</mi><mi>v</mi><mo>−</mo><mi>b</mi><mi>i</mi><mi>n</mi><mi>d</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot;： 父组件tag上绑定的非props属性
+v-bind=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord cjk_fallback">：</span><span class="mord cjk_fallback">父</span><span class="mord cjk_fallback">组</span><span class="mord cjk_fallback">件</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord cjk_fallback">上</span><span class="mord cjk_fallback">绑</span><span class="mord cjk_fallback">定</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">非</span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">o</span><span class="mord mathdefault">p</span><span class="mord mathdefault">s</span><span class="mord cjk_fallback">属</span><span class="mord cjk_fallback">性</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>props&quot;：如果想把父组件的props传给子组件，还可以这样，子组件在props中接收<br>
+v-on=&quot;$listeners&quot;：父组件tag上绑定的非.native修饰符的事件<br>
+.native：让事件仅在native处有效，信托h-textfield-advance用到了@click.native=&quot;&quot;，那么@click事件就不会传给下面了</p>
+<p>例子：<br>
+top组件，提供属性name,age,gender,foo,提供事件isClick和bar。</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;section&gt;
+    &lt;centers
+      name=&quot;name&quot;
+      age=&quot;18&quot;
+      gender=&quot;666&quot;
+      foo=&quot;foo&quot;
+      @isClick=&quot;isClick&quot;
+      @bar=&quot;bar&quot;
+    &gt;&lt;/centers&gt;
+  &lt;/section&gt;
+&lt;/template&gt;
+</code></pre>
+<p>center组件，吃掉属性name和age，没被吃掉的属性和事件会继续往下传。</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;section&gt;
+    &lt;div class=&quot;mt-10&quot;&gt;
+      &lt;bottom v-bind=&quot;$attrs&quot; v-on=&quot;$listeners&quot; /&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+&lt;/template&gt;
+</code></pre>
+<p>bottom组件，吃掉了属性gender和事件isClick和bar，没有被center组件吃掉，所以依然可用</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;section&gt;
+    &lt;div&gt;
+      {{ $attrs['gender'] }} 
+    &lt;/div&gt;
+  &lt;/section&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+  export default {
+    mounted() {
+      this.$listeners.isClick();
+      this.$listeners.bar();
+    }
+  };
+&lt;/script&gt;
+</code></pre>
+<p>参考资料：<br>
 https://www.cnblogs.com/jin-zhe/p/13099416.html</p>
+<h1 id="slots-父组件使用了哪些插槽">$slots 父组件使用了哪些插槽</h1>
+<p>父组件使用子组件，并插入foo和bar槽</p>
+<pre><code class="language-js">&lt;child&gt;
+      &lt;slot name=&quot;foo&quot; slot=&quot;foo&quot;&gt;&lt;/slot&gt;
+      &lt;slot name=&quot;bar&quot; slot=&quot;bar&quot;&gt;&lt;/slot&gt;
+&lt;/child&gt;
+</code></pre>
+<p>子组件判断是否有这些插槽，如果有blah blah blah<br>
+$slots打印出来有foo和bar两个Vnode</p>
+<pre><code class="language-js">&lt;div v-if=&quot;$slots.foo&quot; slot=&quot;foo&quot;&gt;
+    &lt;!-- something here --  &gt;
+&lt;/div&gt;
+</code></pre>
 
               </div>
               <div class="toc-container">
                 <ul class="markdownIt-TOC">
-<li><a href="#vue-prop%E7%88%B6%E7%BB%84%E4%BB%B6%E7%BB%99%E5%AD%90%E7%BB%84%E4%BB%B6%E4%BC%A0%E5%8F%82%E5%92%8C%E4%BD%9C%E7%94%A8%E5%9F%9F%E6%8F%92%E6%A7%BD%E5%AD%90%E7%BB%84%E4%BB%B6%E7%BB%99%E7%88%B6%E7%BB%84%E4%BB%B6%E7%9A%84%E6%8F%92%E6%A7%BD%E4%BC%A0%E5%8F%82">Vue prop(父组件给子组件传参)和作用域插槽(子组件给父组件的插槽传参)</a></li>
-<li><a href="#v-bindattrs-v-onlisteners-%E5%A4%9A%E5%B1%82%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0">v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi>v</mi><mo>−</mo><mi>o</mi><mi>n</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot; v-on=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>listeners&quot; 多层组件透传</a></li>
+<li><a href="#vue-prop%E7%88%B6%E7%BB%84%E4%BB%B6%E7%BB%99%E5%AD%90%E7%BB%84%E4%BB%B6%E4%BC%A0%E5%8F%82%E5%92%8C%E4%BD%9C%E7%94%A8%E5%9F%9F%E6%8F%92%E6%A7%BD%E5%AD%90%E7%BB%84%E4%BB%B6%E7%8E%AF%E5%A2%83%E5%8F%AF%E5%9C%A8%E7%88%B6%E7%BB%84%E4%BB%B6%E7%9A%84%E6%8F%92%E6%A7%BD%E5%86%85%E7%94%A8">Vue prop(父组件给子组件传参)和作用域插槽(子组件环境可在父组件的插槽内用)</a></li>
+<li><a href="#v-bindattrs%E5%92%8Cv-bindpropsv-onlisteners-%E5%92%8Cnative-%E5%A4%9A%E5%B1%82%E7%BB%84%E4%BB%B6%E9%80%8F%E4%BC%A0">v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi mathvariant="normal">和</mi><mi>v</mi><mo>−</mo><mi>b</mi><mi>i</mi><mi>n</mi><mi>d</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot;和v-bind=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord cjk_fallback">和</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>props&quot;，v-on=&quot;$listeners&quot; 和.native 多层组件透传</a></li>
+<li><a href="#slots-%E7%88%B6%E7%BB%84%E4%BB%B6%E4%BD%BF%E7%94%A8%E4%BA%86%E5%93%AA%E4%BA%9B%E6%8F%92%E6%A7%BD">$slots 父组件使用了哪些插槽</a></li>
 </ul>
 
               </div>
