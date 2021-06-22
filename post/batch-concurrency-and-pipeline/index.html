@@ -2,20 +2,20 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>指纹&amp;手势登录 | 刘大钰</title>
+<title>batch concurrency and pipeline | 刘大钰</title>
 <link rel="shortcut icon" href="https://zssanguo.com/notebook//favicon.ico?v=1624331045131">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zssanguo.com/notebook//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="指纹&amp;手势登录 | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
+<link rel="alternate" type="application/atom+xml" title="batch concurrency and pipeline | 刘大钰 - Atom Feed" href="https://zssanguo.com/notebook//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="其他的还没仔细看，回头再写。
-先理一下saveSafeOperation,S_LOGINACCOUNT,S_APP_SPEC_TOKEN这几个
-手机号注册,绑定指纹，杀掉进程后，重新进入没有提示指纹登录
-问题原因
-保存用户安全认证情况sav..." />
+    <meta name="description" content="首先cd到到指定盘卷D：，需要加d:
+cd /d d:
+如果想要命令并发运行而不是一行一行运行的话，需要用start命令
+格式为 start &quot;dummyTitle&quot; command param
+但是有一个问题，正常在c..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -70,35 +70,36 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              指纹&amp;手势登录
+              batch concurrency and pipeline
             </h2>
             <div class="post-info">
               <span>
-                2021-06-09
+                2021-06-22
               </span>
               <span>
-                1 min read
+                2 min read
               </span>
               
             </div>
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p>其他的还没仔细看，回头再写。</p>
-<p>先理一下saveSafeOperation,S_LOGINACCOUNT,S_APP_SPEC_TOKEN这几个</p>
-<p>手机号注册,绑定指纹，杀掉进程后，重新进入没有提示指纹登录<br>
-问题原因<br>
-保存用户安全认证情况saveSafeOperation方法：<br>
-通过getUserAccount获取用户信息(S_LOGINACCOUNT)，然后获取用户信息的accountNo<br>
-然后以accountNo作为key保存认证token到S_APP_SPEC_TOKEN缓存中</p>
-<p>以上情况是因为首次注册登录后，<br>
-S_LOGINACCOUNT用户信息里没有accountNo<br>
-{&quot;accountType&quot;:&quot;0&quot;,&quot;sex&quot;:&quot;&quot;,&quot;custName&quot;:&quot;游客_5869&quot;}</p>
-<p>所以注册后第一次认证指纹，实际没有把安全认证情况保留下来<br>
-(S_APP_SPEC_TOKEN里就没保存进新手机号的token!!!!)</p>
-<p>解决办法：<br>
-我们看到注册后会执行saveLoginInfoAfterRegister,<br>
-这里将手机号传入，然后将S_LOGINACCOUNT的accountNo设置为该手机号，排查后发现手机号是undefined。。。改了下传参，成功修复啦</p>
+                <p>首先cd到到指定盘卷D：，需要加d:<br>
+cd /d d:</p>
+<p>如果想要命令并发运行而不是一行一行运行的话，需要用start命令<br>
+格式为 start &quot;dummyTitle&quot; command param</p>
+<p>但是有一个问题，正常在cmd里使用pipeline是没有问题的<br>
+cd Tomcat/bin &amp; call ./startup.bat （√，两个指令都执行了）</p>
+<p>但是在start命令不支持多个命令pipeline<br>
+start &quot;tomcat&quot; cd Tomcat/bin &amp; call ./startup.bat (X，只会执行第一个指令)</p>
+<p>所以改成start命令实际只执行一个cmd命令，然后cmd命令的参数里传真实要运行的多个指令<br>
+start &quot;tomcat&quot; cmd /c &quot;cd Tomcat/bin &amp; call ./startup.bat&quot;</p>
+<p>最后结果：<br>
+一次性搭建网关，通讯机，和APP环境<br>
+cd /d d:<br>
+start &quot;tomcat&quot; cmd /c &quot;cd Tomcat/bin &amp; call ./startup.bat&quot;<br>
+start &quot;com&quot; cmd /c &quot;cd tongxunji-mock/bin &amp; call ./startComm.bat&quot;<br>
+start &quot;app&quot; cmd /c &quot;cd trust-fund/trustFund/trunk/html5 &amp; call ./startup.bat&quot;</p>
 
               </div>
               <div class="toc-container">
@@ -111,9 +112,9 @@ S_LOGINACCOUNT用户信息里没有accountNo<br>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://zssanguo.com/notebook/post/cun-chu-guo-cheng-diao-shi/">
+            <a href="https://zssanguo.com/notebook/post/todozu-jian-propju-ming-zuo-yong-yu-cha-cao-v-binddollarattrsv-ondollarlisteners/">
               <h3 class="post-title">
-                存储过程调试
+                [TODO]组件prop，具名作用域插槽，v-bind=&#34;$attrs&#34;，v-on=&#34;$listeners&#34; 
               </h3>
             </a>
           </div>

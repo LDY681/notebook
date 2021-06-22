@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zssanguo.com/notebook/</id>
     <title>刘大钰</title>
-    <updated>2021-06-18T10:52:28.343Z</updated>
+    <updated>2021-06-22T03:04:11.096Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zssanguo.com/notebook/"/>
     <link rel="self" href="https://zssanguo.com/notebook/atom.xml"/>
@@ -10,6 +10,30 @@
     <logo>https://zssanguo.com/notebook/images/avatar.png</logo>
     <icon>https://zssanguo.com/notebook/favicon.ico</icon>
     <rights>All rights reserved 2021, 刘大钰</rights>
+    <entry>
+        <title type="html"><![CDATA[batch concurrency and pipeline]]></title>
+        <id>https://zssanguo.com/notebook/post/batch-concurrency-and-pipeline/</id>
+        <link href="https://zssanguo.com/notebook/post/batch-concurrency-and-pipeline/">
+        </link>
+        <updated>2021-06-22T02:55:02.000Z</updated>
+        <content type="html"><![CDATA[<p>首先cd到到指定盘卷D：，需要加d:<br>
+cd /d d:</p>
+<p>如果想要命令并发运行而不是一行一行运行的话，需要用start命令<br>
+格式为 start &quot;dummyTitle&quot; command param</p>
+<p>但是有一个问题，正常在cmd里使用pipeline是没有问题的<br>
+cd Tomcat/bin &amp; call ./startup.bat （√，两个指令都执行了）</p>
+<p>但是在start命令不支持多个命令pipeline<br>
+start &quot;tomcat&quot; cd Tomcat/bin &amp; call ./startup.bat (X，只会执行第一个指令)</p>
+<p>所以改成start命令实际只执行一个cmd命令，然后cmd命令的参数里传真实要运行的多个指令<br>
+start &quot;tomcat&quot; cmd /c &quot;cd Tomcat/bin &amp; call ./startup.bat&quot;</p>
+<p>最后结果：<br>
+一次性搭建网关，通讯机，和APP环境<br>
+cd /d d:<br>
+start &quot;tomcat&quot; cmd /c &quot;cd Tomcat/bin &amp; call ./startup.bat&quot;<br>
+start &quot;com&quot; cmd /c &quot;cd tongxunji-mock/bin &amp; call ./startComm.bat&quot;<br>
+start &quot;app&quot; cmd /c &quot;cd trust-fund/trustFund/trunk/html5 &amp; call ./startup.bat&quot;</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[[TODO]组件prop，具名作用域插槽，v-bind="$attrs"，v-on="$listeners" ]]></title>
         <id>https://zssanguo.com/notebook/post/todozu-jian-propju-ming-zuo-yong-yu-cha-cao-v-binddollarattrsv-ondollarlisteners/</id>
@@ -309,15 +333,6 @@ getContractFileUrl () {
     });
 },
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[!! typeof undefined null]]></title>
-        <id>https://zssanguo.com/notebook/post/typeof-undefined-null/</id>
-        <link href="https://zssanguo.com/notebook/post/typeof-undefined-null/">
-        </link>
-        <updated>2021-04-08T01:31:34.000Z</updated>
-        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://zssanguo.com/notebook//post-images/1617845514394.png" alt="" loading="lazy"></figure>
 ]]></content>
     </entry>
 </feed>
