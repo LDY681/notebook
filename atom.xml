@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zssanguo.com/notebook/</id>
     <title>刘大钰</title>
-    <updated>2021-06-22T06:46:34.026Z</updated>
+    <updated>2021-06-23T09:20:11.322Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zssanguo.com/notebook/"/>
     <link rel="self" href="https://zssanguo.com/notebook/atom.xml"/>
@@ -10,6 +10,18 @@
     <logo>https://zssanguo.com/notebook/images/avatar.png</logo>
     <icon>https://zssanguo.com/notebook/favicon.ico</icon>
     <rights>All rights reserved 2021, 刘大钰</rights>
+    <entry>
+        <title type="html"><![CDATA[Xcode IOS版本不支持]]></title>
+        <id>https://zssanguo.com/notebook/post/xcode-ios-ban-ben-bu-zhi-chi/</id>
+        <link href="https://zssanguo.com/notebook/post/xcode-ios-ban-ben-bu-zhi-chi/">
+        </link>
+        <updated>2021-06-23T06:06:41.000Z</updated>
+        <content type="html"><![CDATA[<p>The current device configuration is unsupported. This iphone 11 is running ios 14.6 which is not supported by Xcode. 然后看了一下商店，Xcode最新更新记录只支持到14.5。怎么办呢？</p>
+<p>https://github.com/filsv/iPhoneOSDeviceSupport<br>
+找到该版本的设备支持文件，解压后然后复制到<br>
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[batch concurrency and pipeline]]></title>
         <id>https://zssanguo.com/notebook/post/batch-concurrency-and-pipeline/</id>
@@ -351,46 +363,6 @@ let docsDir = path.resolve('D:\path\to\output\folder')</p>
 原因：组件内的生命周期函数在执行结束后会 $emit 一个 hook + 生命周期名字 的自定义事件</p>
 <p>程序化的事件侦听器<br>
 https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E7%A8%8B%E5%BA%8F%E5%8C%96%E7%9A%84%E4%BA%8B%E4%BB%B6%E4%BE%A6%E5%90%AC%E5%99%A8</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[多层的Promise return]]></title>
-        <id>https://zssanguo.com/notebook/post/duo-ceng-de-promise-return/</id>
-        <link href="https://zssanguo.com/notebook/post/duo-ceng-de-promise-return/">
-        </link>
-        <updated>2021-04-14T08:07:59.000Z</updated>
-        <content type="html"><![CDATA[<p>遇到很多层的方法调用，又是.then又是callback，如果想把最底层的结果Promise.resolve上去，笨办法是每层方法和callback都要return一下，太繁琐。那么可以在最上层建个new Promise，然后在最底层的时候resolve</p>
-<pre><code>// 简洁的写法
-getContractFileUrl () {
-    return new Promise((resolve) =&gt; {
-        contractService.queryContract(form).then((contractInfo) =&gt; {
-            if (contractInfo.results.length &gt; 0) {
-                productDetailService.getFileUrl(contractInfo.results[0], (url) =&gt; {
-                    resolve(url);
-                })
-            } else {
-                resolve(&quot;&quot;);
-            }
-        });
-    })
-},
-</code></pre>
-<pre><code>// 丑陋的写法
-getContractFileUrl () {
-    return contractService.queryContract(form).then((contractInfo) =&gt; {
-        if (contractInfo.results.length &gt; 0) {
-            //getFileUrl得return callback给fileService.previewFile也得return
-            //previewFile得return callback给$.http.get(&quot;account/download/getFileToken&quot;)
-            //$.http.get(&quot;account/download/getFileToken&quot;)得return
-            return productDetailService.getFileUrl(contractInfo.results[0], (url) =&gt; {
-                return Promise.resolve(url);
-            })
-        } else {
-            return Promise.resolve(&quot;&quot;);
-        }
-    });
-},
-</code></pre>
 ]]></content>
     </entry>
 </feed>
