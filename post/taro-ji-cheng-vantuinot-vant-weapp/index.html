@@ -1,0 +1,321 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Taro集成VantUI（not Vant-Weapp） | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Taro集成VantUI（not Vant-Weapp） | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="package.json的dependencies需要增加依赖包
+// 引入vant，同时引入plugin-html
+  &quot;dependencies&quot;: {
+    &quot;@tarojs/plugin-html&q..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Taro集成VantUI（not Vant-Weapp）
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-11-12
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>package.json的dependencies需要增加依赖包</p>
+<pre><code>// 引入vant，同时引入plugin-html
+  &quot;dependencies&quot;: {
+    &quot;@tarojs/plugin-html&quot;: &quot;3.3.3&quot;,
+    &quot;vant&quot;: &quot;^2.12.13&quot;,
+  },
+</code></pre>
+<p>config/index.js用plugin-html注册pxtransformBlackList黑名单 (vant组件和自己封装的组件不走pxtransform)</p>
+<pre><code>  plugins: [
+    ['@tarojs/plugin-html', {
+      pxtransformBlackList: [/my-/, /van-/]
+    }]
+  ],
+</code></pre>
+<p>package.json的devDependencies增加babel preset和plugin import</p>
+<pre><code>&quot;devDependencies&quot;: {
+    &quot;babel-plugin-import&quot;: &quot;^1.13.3&quot;,
+    &quot;babel-preset-taro&quot;: &quot;3.3.0-alpha.8&quot;,
+  },
+</code></pre>
+<p>babel.config.js 编译时声明框架taro和引用组件库vant</p>
+<pre><code>module.exports = {
+  presets: [
+    ['taro', {
+      framework: 'vue',
+      ts: false
+    }]
+  ],
+  plugins: [
+    ['import', {
+      libraryName: 'vant',
+      libraryDirectory: 'es',
+      style: true
+    }, 'vant']
+  ]
+}
+</code></pre>
+<p>自己遇到的一个坑，vue-loader依赖任意版本css-loader，不指定则css-loader用最新，最新的css-loader依赖webpack 5。<br>
+webpack 5打包会报错Error: Rule can only have one resource source。<br>
+项目里其他node modules依赖webpack 4.46即可，所以指定webpack和css-loader版本如下：<br>
+···<br>
+&quot;devDependencies&quot;: {<br>
+&quot;vue-loader&quot;: &quot;^15.9.2&quot;,<br>
+&quot;webpack&quot;: &quot;^4.46.0&quot;<br>
+},<br>
+&quot;peerDependencies&quot;: {<br>
+&quot;css-loader&quot;: &quot;3.6.0&quot;<br>
+}<br>
+···</p>
+<p>自定义浏览器默认样式<br>
+可以直接全局引用taro提供的内置样式或者overwrite部分样式使VantUI正常<br>
+在app.less中加入</p>
+<pre><code>.h5-span {
+  display: inline;
+}
+
+.h5-button,
+.h5-input {
+  display: inline-block;
+}
+
+.h5-button::after {
+  border: none;
+}
+
+.van-button--hairline::after {
+  transform-origin: unset;
+  width: unset;
+  height: unset;
+}
+</code></pre>
+<p>app.js 引入自定义浏览器默认样式，引入并注册自封装组件</p>
+<pre><code>import './app.less'
+/** import customized components */
+import ActionSheet from './components/action-sheet'
+import Button from './components/button'
+import Image from './components/image'
+
+// Register customized components
+Vue.component(ActionSheet.name, ActionSheet)
+Vue.component(Button.name, Button)
+Vue.component(Image.name, Image)
+</code></pre>
+<p>通用样式和组件里使用，demo里样式搬的官方的，可以拿来参考。<br>
+src/style/var.less里定义通用样式变量<br>
+components/<componentName>组件里引用</p>
+<style lang="less">
+@import '../../style/var';
+.demo-button {
+  .van-button {
+    &--large {
+      margin-bottom: @padding-md;
+    }
+    &--small,
+    &--normal:not(:last-child) {
+      margin-right: @padding-md;
+    }
+  }
+}
+</style>
+<p>自封装组件格式：</p>
+<pre><code>&lt;template&gt;
+  &lt;div class=&quot;demo-component&quot;&gt;
+    &lt;van-component v-model=&quot;show&quot; :attr=&quot;attr&quot; @select=&quot;onSelect&quot; /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import Taro from '@tarojs/taro'
+import { Component } from 'vant'
+
+export default {
+  name: 'my-component',
+  components: {
+    'van-component': Component
+  },
+  props: { 
+    show: {
+      type: Boolean,
+      default: false
+    },
+    atrr: {
+        type: Array,
+        default: [
+        { name: 'option1' },
+        { name: 'option2' },
+        { name: 'option3' },
+      ]
+    }   
+  },
+  methods: {
+    onSelect(item) {
+      this.show = false;
+      Taro.showToast({
+        title: item.name,
+        icon: 'none'
+      })
+    },
+  },
+};
+&lt;/script&gt;
+
+&lt;style lang=&quot;less&quot;&gt;
+@import '../../style/var';
+.demo-component {
+  &amp;-content {
+    padding: @padding-md @padding-md @padding-md * 10;
+  }
+}
+&lt;/style&gt;
+</code></pre>
+<p>页面中(pages/index/index)使用</p>
+<pre><code>&lt;template&gt;
+  &lt;view&gt;
+    &lt;my-component :show=&quot;show&quot; /&gt;
+  &lt;/view&gt;
+&lt;/template&gt;
+</code></pre>
+<p>其他一些和适配无关但是和项目有关的配置<br>
+app.config.js pages指定项目中用到那些页面</p>
+<p>demo效果<br>
+<img src="https://dev.eserica.com/notebook//post-images/1636687906675.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/charles-zhua-bao-he-mock-xiang-ying/">
+              <h3 class="post-title">
+                charles 抓包和mock响应
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,479 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LeanCloud+Node.js学习笔记 | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="LeanCloud+Node.js学习笔记 | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="// 数据存储篇
+​
+//include指针save注意点 因为offer.save的时候owner作为pointer已经save了,所以不用再单独save了,如果save,则会重复操作
+offer.fetch({ include: ['o..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              LeanCloud+Node.js学习笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-09-01
+              </span>
+              <span>
+                11 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>// 数据存储篇<br>
+​<br>
+//include指针save注意点 因为offer.save的时候owner作为pointer已经save了,所以不用再单独save了,如果save,则会重复操作<br>
+offer.fetch({ include: ['owner'] }).then(function(offer){<br>
+var owner = offer.get(&quot;owner&quot;);<br>
+owner.increment(product, -amount);<br>
+offer.increment(&quot;amount&quot;, -amount);<br>
+offer.save(); //不要再单独save owner<br>
+}<br>
+​<br>
+怎么双重include<br>
+比如battle include country, country再include countryImage<br>
+解答: file类型的不需要include，直接get<br>
+对于其他类型的指针，battle.include('country.countryImage')<br>
+​<br>
+空的attriubte值为undefined<br>
+将attribute值设为undefined<br>
+city.unset('warPending');<br>
+return city.save().then(function(res){<br>
+alert(&quot;设为undefined成功!&quot;);<br>
+}, function(err){<br>
+alert(&quot;设为undefined失败&quot;);<br>
+});<br>
+​<br>
+新建对象<br>
+var Todo = AV.Object.extend(&quot;todo&quot;); //在todo表创建Todo Object<br>
+保存对象<br>
+Todo.save().then(function(todo){ //保存Todo Object<br>
+});<br>
+获取对象<br>
+var query = new AV.Query(&quot;todo&quot;); //query todo表<br>
+query.get(&quot;objectId&quot;).then(function(todo){ //设置查询条件 objectId<br>
+});<br>
+获取对象属性<br>
+var query = new AV.Query('Todo');<br>
+query.get('objectId').then(function (todo) {<br>
+//正常获取属性的方法<br>
+var location = todo.get('location');<br>
+或者<br>
+var location = todo.attributes.location;<br>
+//返回值的自带属性<br>
+var id = todo.id;<br>
+//一次性获取所有属性<br>
+console.log(todo.toJSON());<br>
+同步对象(确保本地数据和云端同步)<br>
+todo.fetch(<br>
+keys: 'priority,location' //可以指定刷新的属性或者不填<br>
+).then(function(todo)<br>
+});<br>
+更新对象(通过使用保存选项,query可以按照指定条件去更新对象——当条件满足时，执行更新；条件不满足时，不执行更新。)<br>
+var Account = AV.Object.extend('Account'); //获得Account表的object<br>
+new AV.Query(Account).first().then(function(account) { 查询对象的条件设定为 1.为Account表的object 2.第一个查询结果<br>
+var amount = -100;<br>
+account.increment('balance', amount); //原子操作的增加或减少,不怕并发<br>
+return account.save(null, { //保存经修改的查询对象,这里指定条件<br>
+query: new AV.Query(Account).greaterThanOrEqualTo('balance', -amount), //Save object only when the object matches the query<br>
+fetchWhenSave: true, //fetch and update object after save succeeded<br>
+});<br>
+}).then(function(account) {<br>
+// 保存成功<br>
+console.log('当前余额为：', account.get('balance'));<br>
+}).catch(function(error) {<br>
+if (error.code === 305) {<br>
+console.log('余额不足，操作失败！');}<br>
+});<br>
+删除对象<br>
+var todo = AV.Object.createWithoutData('Todo', '57328ca079bc44005c2472d0');<br>
+todo.destroy().then(function (success) {});<br>
+​<br>
+pointer存储<br>
+关联一个不存在的对象，例如将「广州市」添加至「广东省」：<br>
+var GuangZhou = new AV.Object('City');<br>
+GuangZhou.set('name', '广州');<br>
+var GuangDong = new AV.Object('Province');<br>
+GuangDong.set('name', '广东');<br>
+GuangZhou.set('dependent', GuangDong);// 为广州object 设置 dependent pointer 为广东<br>
+GuangZhou.save(); // 广东无需被单独保存，因为在保存广州的时候已经上传到云端。<br>
+​<br>
+关联一个已经存在的对象，例如将「东莞市」添加至「广东省」：<br>
+var GuangDong = AV.Object.createWithoutData('Province', '56545c5b00b09f857a603632'); // 假设 GuangDong 的 objectId 为 56545c5b00b09f857a603632<br>
+var DongGuan = new AV.Object('City');<br>
+DongGuan.set('name', '东莞');<br>
+DongGuan.set('dependent', GuangDong);<br>
+DongGuan.save();<br>
+​<br>
+pointer查询 ---记得query前先include pointer所指的表<br>
+假如已知一个城市，想知道它的上一级的省份<br>
+var DongGuan = AV.Object.createWithoutData('City', '568e743c00b09aa22162b11f');<br>
+DongGuan.fetch({ include: ['dependent'] }).then(function (city) {<br>
+var provinceName = city.get('dependent').get('name');<br>
+​<br>
+});<br>
+​<br>
+假如查询结果中包含了城市，并想通过一次查询同时把对应的省份也一并加载到本地：<br>
+var query = new AV.Query('City');<br>
+query.equalTo('name', '广州');<br>
+query.include(['dependent']);<br>
+query.find().then(function (result) {<br>
+if (result.length &gt; 0) {<br>
+var GuangZhou = result[0];<br>
+var province = GuangZhou.get('dependent');<br>
+}<br>
+});<br>
+​<br>
+假如已知一个省份，要找出它的所有下辖城市：<br>
+​<br>
+var GuangDong = AV.Object.createWithoutData('Province', '56545c5b00b09f857a603632');<br>
+var query = new AV.Query('City');<br>
+query.equalTo('dependent', GuangDong);<br>
+query.find().then(function (cities) {<br>
+cities.forEach(function (city, i, a) {<br>
+console.log(city.id);<br>
+});<br>
+});</p>
+<p>云引擎里定义云函数<br>
+AV.Cloud.define('averageStars', function(request) {<br>
+var query = new AV.Query('Review');<br>
+query.equalTo('movie', request.params.movie);<br>
+return query.find().then(function(results) {<br>
+var sum = 0;<br>
+for (var i = 0; i &lt; results.length; i++ ) {<br>
+sum += results[i].get('stars');<br>
+}<br>
+return sum / results.length;<br>
+});<br>
+});<br>
+​<br>
+在SDK中调用云函数<br>
+// 在 JavaScript 中 AV.Cloud 提供了一系列方法来调用云函数<br>
+var paramsJson = {<br>
+movie: &quot;夏洛特烦恼&quot;<br>
+};<br>
+AV.Cloud.run('averageStars', paramsJson).then(function(data) {<br>
+// 调用成功，得到成功的应答 data<br>
+}, function(err) {<br>
+// 处理调用失败<br>
+});<br>
+​<br>
+package.json规定启动时启动server.js (启动服务器)<br>
+server.js中启动了app.js (服务器里启动app)<br>
+app.js启动了cloud.js (加载functions目录下和cloud.js中定义的所有云函数)<br>
+​<br>
+req 请求的数据<br>
+res 回应的数据<br>
+next 如果当前middleware的函数不会结束要求回应循环,必须呼叫next<br>
+​<br>
+将response render到todos.ejs里,<br>
+&lt;%= title %&gt; 设置成TODO列表<br>
+&lt;%= todos %&gt; 设置成results<br>
+res.render('todos', {<br>
+title: 'TODO 列表',<br>
+todos: results<br>
+});<br>
+​<br>
+双击highlight所有occurance<br>
+alt+j选中下一个occurance alt+shift+j取消选中下一个occurance<br>
+f3 navigate between hightlighted<br>
+​<br>
+// ..<br>
+node.js学习手册<br>
+两种风格API<br>
+第一种callback<br>
+callback的返回值参数列表第一个一定是err,如果有额外的返回值,那么就在第二个<br>
+例如一下代码(check stats) 第一个返回值是err,第二个才是stats<br>
+fs.stat('/tmp/world', (err, stats) =&gt; {<br>
+if (err) throw err;<br>
+console.log(<code>stats: ${JSON.stringify(stats)}</code>);<br>
+});<br>
+第二种event(XMLHttpRequest)<br>
+​<br>
+// ..<br>
+第一期 node.js介绍和异步风格<br>
+event风格异步回调API<br>
+var redis = require(&quot;redis&quot;);<br>
+client = redis.createClient();<br>
+client.on(&quot;error&quot;, function (err)){<br>
+console.log(&quot;error&quot; + err);<br>
+}<br>
+on event 有 ready, connect, reconnecting, error, end ...<br>
+callback 和 event怎么选择<br>
+如果进程非常快速,能很快得到结果,一般设计成callback<br>
+如果进程非常慢及持续时间长(比如下载4GB),那么使用callback(读完4GB再callback写给用户)不实际<br>
+用event风格设计成读1MB给用户写1MB ls.stdout.on('data', (data) =&gt;)<br>
+​<br>
+处理异常<br>
+同步用try catch,异步用callback的rr对象<br>
+有时候觉得自己出了异常但是没有拿到,可能是同步的没有处理,例如<br>
+​<br>
+const fs = require(&quot;fs&quot;);<br>
+const x = y + z;<br>
+fs.rename('hello', 'world', (err) =&gt; {<br>
+if (err) throw err;<br>
+console.log('rename completed')<br>
+});<br>
+​<br>
+const x = y + z;导致的错误<br>
+异步异常处理了,但是同步没有<br>
+所以最保险是在异步外面用try catch拦住可能产生的同步异常<br>
+​<br>
+try {<br>
+const fs = require(&quot;fs&quot;);<br>
+const x = y + z;<br>
+fs.rename('hello', 'world', (err) =&gt; {<br>
+if (err) throw err;<br>
+console.log('rename completed')<br>
+});<br>
+}catch (err){<br>
+console.log (err);<br>
+}<br>
+​<br>
+使用uncaughtException助力开发期<br>
+如果代码中没有异常处理,程序会把error一直抛抛抛,最后抛到控台,打印到stderr并程序崩溃<br>
+进程运行时,遇到uncaughtException后将error写入<br>
+注:process是全局变量, 任何地方都可以使用<br>
+process.on('uncaughtException', (err, origin) =&gt; {<br>
+fs.writeSync(<br>
+process.stderr.fd,<br>
+<code>Caught exception: ${err}\n</code> +<br>
+<code>Exception origin: ${origin}</code><br>
+);<br>
+});<br>
+​<br>
+setTimeout(() =&gt; {<br>
+console.log('This will still run.');<br>
+}, 500);<br>
+​<br>
+nonexistentFunc();<br>
+//call一个不存在的程序,没有异常处理,如果没有process.on('uncaughtException'),程序直接崩溃,堆栈信息打印不出来<br>
+因为有,所以不会崩溃,error被抛出并被拦截,程序因为异常不会执行异常函数之后的代码,所以最后的console log this will not run不会被打印<br>
+error被处理,程序回归正常,在setTimeout执行完毕后正常退出<br>
+console.log('This will not run.');<br>
+​<br>
+// ..<br>
+第二期 npm包管理器<br>
+npm init 创建package.json 项目描述文件(需要哪些依赖等)<br>
+下载包 npm install (package_name) 加包名就是下载指定包,不加就是下载package.json里描述的包<br>
+--save 自动更新依赖 -g 全局安装(安装到了本地全局 /usr/local/lib/node_modules)<br>
+下载完后会有node_modules的包文件夹<br>
+npm list 当前项目的依赖列表<br>
+npm shrinkwrap 版本固化-冻结依赖 生成npm-shrinkwrap.json(包含node_modules目录里面所有依赖包)下次用npm install安装的时候<br>
+会按照shrinkwrap.json里的版本号安装<br>
+​<br>
+依赖管理<br>
+生产环境依赖 dependencies 运行依赖,编译依赖(babel)<br>
+测试环境依赖 devDependencies 测试依赖(npm install mocha --save-dev),开发工具依赖<br>
+优化依赖包存储: npm dedupe重新打乱然后解决依赖,或者删了node_modules,重新npm install一下<br>
+​<br>
+package.json里的 scripts 运行脚本<br>
+&quot;scripts&quot;: {<br>
+//hook函数<br>
+&quot;start&quot;: &quot;node server.js&quot;, (start时可以自己做一下初始化的事情等,比如设置全局变量)<br>
+&quot;dev&quot;: &quot;nodemon server.js&quot;,<br>
+&quot;postinstall&quot;: &quot;echo 1111&quot;<br>
+},<br>
+npm run start run-执行script start-执行script里的start<br>
+自带的hook函数不用run 比如npm start可以直接执行<br>
+但是自定义的就需要run, 比如npm run dev<br>
+leancloud的命令行工具 执行lean up时 间接执行了dev的script<br>
+云引擎指定node.js版本 详见网站托管开发指南里的package.json<br>
+​<br>
+// ..<br>
+第三期 开发工具介绍 curl, Postman, lean-cli<br>
+curl 命令行的http client<br>
+常用参数:<br>
+-X method(GET,POST),-H header(cookie等信息),-d data(内容)<br>
+curl -v web_address 详细的http请求</p>
+<blockquote>
+<p>本机发到服务器<br>
+&lt; 服务器返回本机<br>
+{&quot;foo&quot;, &quot;bar&quot;} 传入jason格式参数(request payload)<br>
+curl -X POST http://localhost:3000/todos -d 'content=test'<br>
+curl 'http://localhost:3000/1.1/functions/hello' -H 'appId' -H 'appKey' -H 'Content-Type: application/json' (--data-binary'{&quot;foo&quot;, &quot;bar&quot;}') (-d @data.json)<br>
+​<br>
+开启debug日志 启动的时候设置一下debug的变量<br>
+env DEBUG=leancloud:request lean up<br>
+Postman-软件<br>
+lean-cli-leancloud命令行<br>
+可以在云引擎的控台配置环境变量(比如不想写在代码中的key)然后通过process.env.xxxKey拿到这个值<br>
+​<br>
+// ..<br>
+第四期 Promise(处理对象和处理规则规范化:有些包写的不规范,可能第一个返回的不是error,以及是否返回一个对象还是多个params)<br>
+并且解决node.js回调金字塔<br>
+var promise = getAsyncPromise(&quot;fileA.txt&quot;);<br>
+promise.then(function(result){<br>
+// 获取文件内容成功时的处理<br>
+}).catch(function(error){<br>
+// 获取文件内容失败时的处理<br>
+});<br>
+​<br>
+创建promise对象, 使用new来调用promise的构造器进行实例化<br>
+var promise = new Promise(function(resolve, reject)){<br>
+});<br>
+promise.then(onFulfilled, onRejected);<br>
+​<br>
+promise.then()是异步的,所以<br>
+function A(){<br>
+var value;<br>
+query.find.then(function(){<br>
+value = 1;<br>
+});<br>
+return value;<br>
+}<br>
+结果是undefined,因为.then还没有执行完<br>
+那我们就要chain promise以解决这个问题<br>
+function A(){<br>
+var value;<br>
+let promise = query.find.then(function(){<br>
+value = 1;<br>
+return value;<br>
+});<br>
+return promise;<br>
+}<br>
+function B(){<br>
+A().then(function(value){<br>
+var i = value; //value = 1<br>
+});<br>
+}<br>
+​<br>
+​</p>
+</blockquote>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/h5/">
+              <h3 class="post-title">
+                H5学习笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

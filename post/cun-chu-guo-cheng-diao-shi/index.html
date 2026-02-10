@@ -1,0 +1,194 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>存储过程调试 | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="存储过程调试 | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在开发过程中，遇到CRM的报错了，怎么调试存储过程呢？
+首先在业务网关日志里找到对应的功能号（例D2031用户信息查询）可通过该功能号在接口文档或者网关日志里找到其存储过程（例PKG_DC_OUTSERVICE.SP_GETCUSTOMER..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              存储过程调试
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-06-08
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>在开发过程中，遇到CRM的报错了，怎么调试存储过程呢？<br>
+首先在业务网关日志里找到对应的功能号（例D2031用户信息查询）可通过该功能号在接口文档或者网关日志里找到其存储过程（例PKG_DC_OUTSERVICE.SP_GETCUSTOMERINFOALL）</p>
+<p>在PLSQL里，在程序窗口右键测试进入测试脚本<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623135109003.png" alt="" loading="lazy"></p>
+<p>进入测试脚本后，如需模拟相同报错环境，就在底部变量表里输入网关在请求CRM时传入的相同的入参<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623135773041.png" alt="" loading="lazy"></p>
+<p>调试界面如下，基本和chrome devtools一个布局<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623136152596.png" alt="" loading="lazy"></p>
+<p>单步进入到pkg函数，也就是具体的存储过程方法，这里就可以一步步单步下去看看具体哪里报错了<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623136309003.png" alt="" loading="lazy"></p>
+<p>可以看到一个存储过程大概的结构是：</p>
+<ol>
+<li>进行一系列的入参检查，如果不符合，写好reaonscode和reasoninfo然后return<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623136334998.png" alt="" loading="lazy"></li>
+</ol>
+<p>2.通过检查后，下一步执行的query写好到v-sql里<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623140015779.png" alt="" loading="lazy"></p>
+<p>3.OPEN cursor FOR query，处理EXCEPTION<br>
+OPEN cursor FOR query的意思是（可以简单理解为执行query，返回query结果到cursor）：<br>
+OPEN FOR 执行cursor变量所关联的query。分配数据库资源来处理query并得出结果集-符合query条件的rows。然后cursor变量会指向结果集第一行的前面。<br>
+https://docs.oracle.com/cd/B12037_01/appdev.101/b10807/13_elems033.htm</p>
+<figure data-type="image" tabindex="1"><img src="https://dev.eserica.com/notebook//post-images/1623136558726.png" alt="" loading="lazy"></figure>
+<p>在进行调试时：<br>
+如果是环节1入参检查时报错，那么直接找到问题源了。<br>
+如果是环节3执行query时报错，那么就需要看看这个query执行时发生甚么事了。<br>
+可以编辑一下存过（编辑过程见下），在OPEN cursor FOR query之前加上<br>
+insert into sql_sql values('v_sql',v_sql,sysdate);<br>
+commit;<br>
+将具体query保存到 sql_sql表里查看</p>
+<p><img src="https://dev.eserica.com/notebook//post-images/1623147024281.png" alt="" loading="lazy"><br>
+然后我们把这段具体的query复制下来跑一遍，就可以看出query执行时报了什么错了</p>
+<p>编辑存储过程的话需要在package里找到存过的对应package<br>
+PKG_DC_OUTSERVICE.SP_GETCUSTOMERINFOALL的package就是PKG_DC_OUTSERVICE<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623145344220.jpg" alt="" loading="lazy"><br>
+package点选编辑说明和体，然后选择第二个tab（找了好半天啊啊啊啊）就能编辑了<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623145767767.png" alt="" loading="lazy"><br>
+编辑后F8重新编译，如果提示打开多个窗口无法编译，看下是不是测试窗口还在运行，关闭测试窗口后重新编译，再跑测试</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/1921681371-da-bu-kai/">
+              <h3 class="post-title">
+                localhost VS 127.0.0.1 VS 192.168.137.1
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

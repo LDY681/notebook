@@ -1,0 +1,224 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>原生拓展能力梳理 | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="原生拓展能力梳理 | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="项目里如何调原生方法
+LightSDK.native.callNative(key, cb) - 通用，可调用原生拓展方法
+LightSDK.native.methodName(key, cb) - 仅调用原生内置方法
+调用原生内置方法可以..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              原生拓展能力梳理
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-30
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>项目里如何调原生方法<br>
+LightSDK.native.callNative(key, cb) - 通用，可调用原生拓展方法<br>
+LightSDK.native.methodName(key, cb) - 仅调用原生内置方法</p>
+<p>调用原生内置方法可以直接通过LightSDK.native.methodName()是因为node_modules/light-sdk/lib/native.js里封装了这些方法，本质上和callNative()一样是调用的bridge.call(method, params, cb)</p>
+<p>拓展原生能力</p>
+<ol>
+<li>APP项目里拓展新project&amp;方法：</li>
+</ol>
+<pre><code>// ${projectName}/src/main/java/com/hundsun/${projectName}/JSAPI/LightJSAPI.java
+public class LightJSAPI implements interfaceName {
+    public void methodName(){
+        //blah blah blah
+    }
+}
+</code></pre>
+<p>案例：</p>
+<ul>
+<li>LightSDK.native.callNative(&quot;common.openCameraOrPhoto&quot;)是调用Andriod\src\main\java\com\hundsun\common\JSAPI\LightJSAPI.java里的openCameraOrPhoto()</li>
+<li>LightSDK.native.callNative(&quot;video_rec.video&quot;)是调用Andriod\video_rec\src\main\java\com\hundsun\video_rec\JSAPI\LightJSAPI.java里的video()</li>
+</ul>
+<p>build.gradle最终将拓展库和原生库(xxx.arr格式引用在libs下)打包到一起<br>
+拓展库：<br>
+<code>implementation project(path: ':filegmu') //PDF 阅读</code><br>
+原生库：<br>
+<code>implementation(name: 'jsnativegmu', ext: 'aar') //JSNative容器库</code></p>
+<ol start="2">
+<li>拓展weex module</li>
+</ol>
+<ul>
+<li>创建dialog module (src\main\java\com\hundsun\extend\module\WXDialogModule.java)</li>
+</ul>
+<pre><code>public class WXDialogModule extends WXModule {
+  //blah blah blah
+}
+</code></pre>
+<ul>
+<li>在WeexPlugins中注册（src\main\java\com\hundsun\extend\WeexPlugins.java）</li>
+</ul>
+<pre><code>WXSDKEngine.registerModule(&quot;dialog&quot;, WXDialogModule.class);
+</code></pre>
+<ul>
+<li>在h5项目中使用：</li>
+</ul>
+<pre><code>weex.requireModule(&quot;dialog&quot;)
+</code></pre>
+<ol start="3">
+<li>拓展weex 组件</li>
+</ol>
+<ul>
+<li>创建shadowview组件(src\main\java\com\hundsun\extend\components\WXShadowViewComponent.java):</li>
+</ul>
+<pre><code>public class WXShadowViewComponent extends WXVContainer&lt;ShadowLayout&gt; {
+  //blah blah blah
+}
+</code></pre>
+<ul>
+<li>在WeexPlugins中注册（src\main\java\com\hundsun\extend\WeexPlugins.java）</li>
+</ul>
+<pre><code>WXSDKEngine.registerComponent(&quot;shadow-view&quot;, WXShadowViewComponent.class, false);
+</code></pre>
+<ul>
+<li>在h5项目中使用(不用require，直接可用)：</li>
+</ul>
+<pre><code>&lt;component :style=&quot;shadowStyle&quot; :is=&quot;isAndroid?'shadow-view':'div'&quot;&gt;&lt;/component&gt;
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/vue-loader/">
+              <h3 class="post-title">
+                Vue Loader
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

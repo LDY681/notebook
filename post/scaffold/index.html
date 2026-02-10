@@ -1,0 +1,197 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>scaffold | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="scaffold | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Scaffold组件
+按照先后顺序
+1   backgroundcolor
+全页面（  top: 0;right: 0;bottom: 0;left:0;）的背景色，默认用的是colors.bg_page及#F7F7F7,可指定并支持lin..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              scaffold
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-07
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="scaffold组件">Scaffold组件</h1>
+<p>按照先后顺序<br>
+1   backgroundcolor<br>
+全页面（  top: 0;right: 0;bottom: 0;left:0;）的背景色，默认用的是colors.bg_page及#F7F7F7,可指定并支持linear-gradient</p>
+<p>2   navbar插槽<br>
+immersive属性: 导航栏不占高度(即用fixed定位,使得导航栏下方元素与导航栏重叠)<br>
+<img src="https://dev.eserica.com/notebook//post-images/1618971253390.png" alt="" loading="lazy"><br>
+navbar: navbar组件属性(title,theme,subTitle,bottomLineShow,leftBtnShow等)<br>
+statusbar: 是否含有APP状态栏<br>
+leftBtn插槽<br>
+title插槽<br>
+rightBtn插槽<br>
+3   flexible可折叠背景(导航栏下方,随着向上滑动收折,同样是fixed定位,不占高度)<br>
+flexible属性:backgroundColor,height,title,shrinkHeight(可被折叠的高度,不设则可全部收起),scaleRatio(折叠速度)<br>
+bindEl():控制上滑折叠效果。以anchor作为事件触发者,eventType作为事件类型。绑定element(flexible，decoration，navbar.headtitle和navbar.navbg)，通过自定义expression表达式，改变该element的property(opacity和transform.translateY)。使用到了weex的weex-bindingx（https://alibaba.github.io/bindingx/guide/cn_introduce）<br>
+4   decoration和flexible差不多不做介绍<br>
+5   top插槽<br>
+6   body插槽<br>
+scroller-type属性：根据scroller-type，采用不同组件装填默认插槽(list, scroller, div)<br>
+7   fixed插槽</p>
+<p>scaffold和flexible中有些地方用了 position: isApp ? 'absolute' : 'fixed'这样的判断。原因是navbar有可能是fixed定位，如果都用fixed定位就会把navbar给覆盖掉。</p>
+<p>页面高度<br>
+APP上有statusBarHeight(状态栏高度),原生标题栏高度（类似lightview上的标题栏）,主体区域,以及IOS底部安全区域/Andriod底部虚拟按键区域。我们页面默认的navbartype未0，及通顶效果（无状态栏和标题栏），所以在一些页面上，顶部组件的高度需要额外加上状态栏的高度height = height + statusBarHeight</p>
+<p>http://document.lightyy.com/zh-cn/docs/develop/olight-route.html#options-navBarType</p>
+<h1 id="shrinkheighttranslate和flexible可见区域">shrinkheight，translate和flexible可见区域</h1>
+<p>不设shrinkheight时<br>
+折叠屏往上滚动后<br>
+flexible区域（头部背景）的translateY变化把整个flexible区域顶上去了<br>
+<img src="https://dev.eserica.com/notebook//post-images/1620373752163.png" alt="" loading="lazy"></p>
+<p>把shrinkheight设为0时，折叠屏网上滚动后flexible所在区域不变。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1620373589709.png" alt="" loading="lazy"><br>
+但是比如在交易详情中，flexible下面的列表是白色背景的。<br>
+所以在滚动时，底下的白色背景覆盖了上面的flexible区域，所以同样达到了flexible随滚动缩小的视觉效果。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1620373591851.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#scaffold%E7%BB%84%E4%BB%B6">Scaffold组件</a></li>
+<li><a href="#shrinkheighttranslate%E5%92%8Cflexible%E5%8F%AF%E8%A7%81%E5%8C%BA%E5%9F%9F">shrinkheight，translate和flexible可见区域</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/bian-xie-shuo-ming-wen-dang/">
+              <h3 class="post-title">
+                编写说明文档
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

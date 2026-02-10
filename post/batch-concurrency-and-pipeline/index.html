@@ -1,0 +1,178 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>batch concurrency and pipeline | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="batch concurrency and pipeline | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="首先cd到到指定盘卷D：，需要加d:
+cd /d d:
+如果想要命令并发运行而不是一行一行运行的话，需要用start命令
+格式为 start &quot;dummyTitle&quot; command param
+但是有一个问题，正常在c..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              batch concurrency and pipeline
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-06-22
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>首先cd到到指定盘卷D：，需要加d:<br>
+cd /d d:</p>
+<p>如果想要命令并发运行而不是一行一行运行的话，需要用start命令<br>
+格式为 start &quot;dummyTitle&quot; command param</p>
+<p>但是有一个问题，正常在cmd里使用pipeline是没有问题的<br>
+cd Tomcat/bin &amp; call ./startup.bat （√，两个指令都执行了）</p>
+<p>但是在start命令不支持多个命令pipeline<br>
+start &quot;tomcat&quot; cd Tomcat/bin &amp; call ./startup.bat (X，只会执行第一个指令)</p>
+<p>所以改成start命令实际只执行一个cmd命令，然后cmd命令的参数里传真实要运行的多个指令<br>
+start &quot;tomcat&quot; cmd /c &quot;cd Tomcat/bin &amp; call ./startup.bat&quot;</p>
+<p>最后结果：<br>
+一次性搭建网关，通讯机，和APP环境<br>
+cd /d d:<br>
+start &quot;tomcat&quot; cmd /c &quot;cd Tomcat/bin &amp; call ./startup.bat&quot;<br>
+start &quot;com&quot; cmd /c &quot;cd tongxunji-mock/bin &amp; call ./startComm.bat&quot;<br>
+start &quot;app&quot; cmd /c &quot;cd trust-fund/trustFund/trunk/html5 &amp; call ./startup.bat&quot;</p>
+<p>diff2html<br>
+diff -u XXX.vue XYZ.vue | diff2html -i stdin</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/todozu-jian-propju-ming-zuo-yong-yu-cha-cao-v-binddollarattrsv-ondollarlisteners/">
+              <h3 class="post-title">
+                prop，具名作用域插槽，多层组件attr和listener透传
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

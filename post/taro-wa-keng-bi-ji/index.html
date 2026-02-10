@@ -1,0 +1,260 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>银行基线挖坑笔记 | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="银行基线挖坑笔记 | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Taro行内样式转化规则无效
+在编译时，Taro 会帮你对样式做尺寸转换操作，但是如果是在 JS 中书写了行内样式，那么编译时就无法做替换了，针对这种情况，Taro 提供了 API Taro.pxTransform 来做运行时的尺寸转换。
+..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              银行基线挖坑笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-07-01
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>Taro行内样式转化规则无效<br>
+在编译时，Taro 会帮你对样式做尺寸转换操作，但是如果是在 JS 中书写了行内样式，那么编译时就无法做替换了，针对这种情况，Taro 提供了 API Taro.pxTransform 来做运行时的尺寸转换。</p>
+<pre><code>&lt;View className='index' style={{height:Taro.pxTransform(40)}}&gt;
+    &lt;Text className='text'&gt;Hello world!&lt;/Text&gt;
+&lt;/View&gt;
+</code></pre>
+<h1 id="appserver长啥样">AppServer长啥样</h1>
+<p>方法写在fundapp-service。<br>
+model/interface在父目录，implementation/class在/impl<br>
+class路径：<br>
+<code>fundapp-service\src\main\java\com\hundsun\fund\fundapp\service\product\impl\ProductServiceImpl.java</code><br>
+interface路径：<br>
+<code>fundapp-service\src\main\java\com\hundsun\fund\fundapp\service\product\ProductService.java</code></p>
+<p>Server routing/mapping写在fundapp-server<br>
+<code>fundapp-server\src\main\java\com\hundsun\fund\fundapp\server\product\ProductController.java</code></p>
+<ol>
+<li>
+<p>引入 fundapp/service/product目录下的ProductService.java<br>
+import com.hundsun.fund.fundapp.service.product.ProductService;</p>
+</li>
+<li>
+<p>使用引入的ProductService<br>
+主routing为/product/product，当get /product/product/productInfoList.json时调用productInfoList方法，该方法调用productService.productInfoList</p>
+</li>
+</ol>
+<pre><code>@Api(basePath = &quot;/product&quot;,value = &quot;产品信息&quot;,tags = &quot;产品信息&quot;)
+@Controller
+@RequestMapping(&quot;/product/product&quot;)
+public class ProductController {
+    @Autowired
+    private ProductService productService;
+
+    @ApiOperation(value = &quot;产品列表，客户端使用&quot;,response = ProductInfoVM.class)
+    @RequestMapping(value = &quot;/productInfoList.json&quot;,method = {RequestMethod.GET,RequestMethod.POST})
+    @ResponseBody
+    public ViewModelAdapter productInfoList(@ModelAttribute FundStateQueryParam param){
+        return productService.productInfoList(param);
+    }
+}
+</code></pre>
+<h1 id="原生打包配置">原生打包配置</h1>
+<h2 id="如何修改arr模板库">如何修改arr模板库</h2>
+<p>替换lib中的miniappgmu.aar<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924506551.png" alt="" loading="lazy"></p>
+<h2 id="如何修改前端模板库">如何修改前端模板库</h2>
+<p>可以直接将zip重命名为版本号后放进miniapp文件夹，文件夹中根据最高的版本号打包<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924393631.png" alt="" loading="lazy"></p>
+<h2 id="如何打离线包">如何打离线包</h2>
+<p>将编译好的文件放到stream/main/0.0.0中<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924581540.png" alt="" loading="lazy"></p>
+<h2 id="如何打远程包">如何打远程包</h2>
+<p>main.gmu中将默认main.vhost.light.com改为自己的本地地址。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924654409.png" alt="" loading="lazy"></p>
+<h3 id="如何指定路径和拼接入参">如何指定路径和拼接入参</h3>
+<p>后面填入pages页面路径，后面拼接入参。需要注意需要encodeURI。<br>
+encode之前：<br>
+<code>gmu://miniapp?standaloneMode=false&amp;startPage=http://192.168.137.1:4777/app.miniapp.js#pages/index/home?name=LDY681&amp;text=jsnToMiniprogramDemo</code><br>
+encode之后：<br>
+<code>gmu://miniapp?standaloneMode=false&amp;startPage=http%3A%2F%2F192.168.137.1%3A4777%2Fapp.miniapp.js%23pages%2Findex%2Fhome%3Fname%3DLDY681%26text%3DjsnToMiniprogramDemo</code></p>
+<h2 id="如何打摇一摇">如何打摇一摇</h2>
+<h3 id="需要增加以下6个依赖buildgradle中加入依赖">需要增加以下6个依赖，build.gradle中加入依赖</h3>
+<pre><code>    implementation(name: 'jsndebug', ext: 'aar')
+    implementation(name: 'lightviewpreview', ext: 'aar')
+    implementation(name: 'miniappdebug', ext: 'aar')
+    implementation(name: 'jsnativegmu', ext: 'aar')
+    implementation(name: 'barcodegmu-release', ext: 'aar')
+    implementation(name: 'servicegmu-release', ext: 'aar')
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://dev.eserica.com/notebook//post-images/1656925116136.png" alt="" loading="lazy"></figure>
+<h3 id="www中增加入口页面">www中增加入口页面</h3>
+<p>入口页面是带了摇一摇功能的几个tab页，第二个tab页可以直接点击进入默认的小程序 。配置地址方式和之前一样<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656925327476.png" alt="" loading="lazy"></p>
+<h3 id="app指向www页面">app指向www页面</h3>
+<p>通过web方式打开www中的index.html<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656925413587.png" alt="" loading="lazy"><br>
+现在研发中心支持3种方式<br>
+如果是js打头的，那么就是走原来老light的jsnative<br>
+如果是miniapp打头的，那么就是走小程序的lightweb<br>
+如果是web，那就是web<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656926499959.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#appserver%E9%95%BF%E5%95%A5%E6%A0%B7">AppServer长啥样</a></li>
+<li><a href="#%E5%8E%9F%E7%94%9F%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE">原生打包配置</a>
+<ul>
+<li><a href="#%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9arr%E6%A8%A1%E6%9D%BF%E5%BA%93">如何修改arr模板库</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E5%89%8D%E7%AB%AF%E6%A8%A1%E6%9D%BF%E5%BA%93">如何修改前端模板库</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E6%89%93%E7%A6%BB%E7%BA%BF%E5%8C%85">如何打离线包</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E6%89%93%E8%BF%9C%E7%A8%8B%E5%8C%85">如何打远程包</a>
+<ul>
+<li><a href="#%E5%A6%82%E4%BD%95%E6%8C%87%E5%AE%9A%E8%B7%AF%E5%BE%84%E5%92%8C%E6%8B%BC%E6%8E%A5%E5%85%A5%E5%8F%82">如何指定路径和拼接入参</a></li>
+</ul>
+</li>
+<li><a href="#%E5%A6%82%E4%BD%95%E6%89%93%E6%91%87%E4%B8%80%E6%91%87">如何打摇一摇</a>
+<ul>
+<li><a href="#%E9%9C%80%E8%A6%81%E5%A2%9E%E5%8A%A0%E4%BB%A5%E4%B8%8B6%E4%B8%AA%E4%BE%9D%E8%B5%96buildgradle%E4%B8%AD%E5%8A%A0%E5%85%A5%E4%BE%9D%E8%B5%96">需要增加以下6个依赖，build.gradle中加入依赖</a></li>
+<li><a href="#www%E4%B8%AD%E5%A2%9E%E5%8A%A0%E5%85%A5%E5%8F%A3%E9%A1%B5%E9%9D%A2">www中增加入口页面</a></li>
+<li><a href="#app%E6%8C%87%E5%90%91www%E9%A1%B5%E9%9D%A2">app指向www页面</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/taro-ji-cheng-vantuinot-vant-weapp/">
+              <h3 class="post-title">
+                Taro集成VantUI（not Vant-Weapp）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

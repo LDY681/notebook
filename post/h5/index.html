@@ -1,0 +1,305 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>H5学习笔记 | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="H5学习笔记 | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="ES6 template literals模板字符串
+var parkName = 'Disneyland'
+过去:'I love ' + parkName
+现在I love ${parkName}
+template literals不能在..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              H5学习笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-09-01
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="es6-template-literals模板字符串">ES6 template literals模板字符串</h1>
+<p>var parkName = 'Disneyland'<br>
+过去:'I love ' + parkName<br>
+现在<code>I love ${parkName}</code></p>
+<p>template literals不能在name value pair里使用<br>
+那怎么把variable pass进name-value pair？<br>
+pair的name左右加[]<br>
+const characterName = 'Mickey Mouse'<br>
+const mood = 'Happy'<br>
+const disneyCharacter = {<br>
+[characterName]: mood, // correct<br>
+<code>${characterName}</code>: mood, //wrong<br>
+[<code>${characterName}</code>]: mood, //also correct but unnecessary<br>
+}<br>
+​</p>
+<h1 id="inlineblockinline-block">Inline/block/inline-block</h1>
+<p>inline(当作font) Displays an element as an inline element (like <span>). 没有高度，宽度和vertical paddings/margins<br>
+block(div,带line break) Displays an element as a block element (like <p>). It starts on a new line, and takes up the whole width<br>
+inline-block Displays an element as an inline-level block container(like img). The element itself is formatted as an inline element. 不像block带line break,但是可以设置高度，宽度，可以设置vertical的margin padding.margin: auto不行<br>
+​区别一：<br>
+块级：块级元素会独占一行，默认情况下宽度自动填满其父元素宽度<br>
+行内：行内元素不会独占一行，相邻的行内元素会排在同一行。其宽度随内容的变化而变化。<br>
+区别二：<br>
+块级：块级元素可以设置宽高<br>
+行内：行内元素不可以设置宽高<br>
+区别三：<br>
+块级：块级元素可以设置margin，padding<br>
+行内：行内元素水平方向的margin,padding可以生效。但是竖直方向的margin/padding却不能生效。<br>
+区别四：<br>
+块级：display:block;<br>
+行内：display:inline;<br>
+可以通过修改display属性来切换块级元素和行内元素</p>
+<h1 id="overflow">overflow</h1>
+<p>overflow/-x/-y: hidden<br>
+隐藏超出部分，不会有scrollbar了<br>
+​<br>
+clearfix放在float外面第一个父元素里的</p>
+<div id="1" class="clearfix">
+<div id="2" style="float: right;"></div>
+#这个div的margin是根据#1的,而不是根据#2
+ <div id="3" style="margin-top: 50px;"></div>
+</div>
+如果父元素设置了宽度，子元素总宽度超过了父元素的宽度,那么其中一个元素会drop,谁顺序在后面就会drop谁  
+float只会影响内联元素的布局,不会影响块级元素的布局.如果包含框的高度比浮动框低的时候,就会高度塌陷(float元素吐出来了)  
+​
+# 异步函数,callback
+如果有两个异步的函数,第一个函数执行了(还不知道有没有完成),然后开始执行第二个函数(如果依赖第一个函数)就有可能报错
+解决方法就是在callback(回调的地方,即已经执行完并且返回了状态)的地方再执行第二个函数
+<h1 id="位置">位置</h1>
+<p>left top等是针对view的position 需要position: absolute<br>
+margin-left, margin-top这些 是针对上一个元素的position<br>
+​</p>
+<h1 id="如何居中">如何居中</h1>
+<p>block element 可以margin: auto实现水平方向的居中<br>
+文字可以text-align: center<br>
+图片可以display: block; margin设为auto<br>
+图片在图片元素中居中 vertical-align: middle;<br>
+​</p>
+<h1 id="如何做出透明边框的效果">如何做出透明边框的效果</h1>
+<p>可以用box-shadow来加透明border<br>
+20px的shadow, 0.3的透明度 来点小radius<br>
+border-radius: 1px; box-shadow: 0px 0px 0px 20px rgba(0,0,0,0.3);<br>
+​</p>
+<h1 id="js加载顺序">js加载顺序</h1>
+<p>head的js在页面加载完之前被载入<br>
+body的js在页面载入的时候执行<br>
+html之后的js在页面载入完成后执行<br>
+​</p>
+<h1 id="webpack的作用-有很多js要加载并且互相依赖很容易出错">webpack的作用 （有很多js要加载，并且互相依赖，很容易出错）</h1>
+<p>WebPack可以看做是模块打包机：它做的事情是，分析你的项目结构。<br>
+找到JavaScript模块以及其它的一些浏览器不能直接运行的拓展语言（Scss，TypeScript等）<br>
+并将其打包为合适的格式以供浏览器使用。<br>
+webpack两个文件夹,一个app,一个public,app是放主入口文件和其他js的(main.js和greeter.js)<br>
+public是放html和打包后的bundle.js的<br>
+greeter.js<br>
+module.exports = function(){<br>
+//blah<br>
+}</p>
+<p>main.js<br>
+const greeter = require(&quot;./greeter.js&quot;)<br>
+document.queryselector(&quot;#root&quot;.appendchild(greeter()));<br>
+然后通过webpack app/main.js public/bundle.js,将主入口文件打包成bundle.js</p>
+<h1 id="cors">cors</h1>
+<p>no-cors mode下, post的req.body是空的,需要cors middleware https://expressjs.com/en/resources/middleware/cors.html</p>
+<h1 id="实现滚动加载">实现滚动加载</h1>
+<p>scrolltop:已混动看过并隐藏在上面的部分<br>
+scrollheight:所有内容的高度<br>
+clientheight或window.height:视窗的高度<br>
+<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;}&#039;, got &#039;EOF&#039; at end of input: …nction() {
+ if('>(window).scroll(function() {
+ if(</span>(window).scrollTop() == $(document).height() - $(window).height()) {<br>
+alert(&quot;bottom&quot;) }<br>
+});</p>
+<h1 id="tcp-transmission-control-protocol">TCP transmission control protocol:</h1>
+<p>流传输,可靠,4次握手(连接后除非某端断开,不然会一直连着).<br>
+1客户端向服务端传包,并且进入send状态<br>
+2服务端收到包,进行确认并且向客户端发包,进入recv状态<br>
+3客户端收到包,进行确认并且向服务端发包,双端进入established状态<br>
+4哪端先断开链接,哪端发送FIN分节,进行终止<br>
+UDP user datagram protocol<br>
+不连接就直接发包过去,比如常见的ping指令<br>
+缺乏可靠性,允许一定的丢包<br>
+HTTP:<br>
+客户端请求一次,服务器回应一次,请求结束后就关闭链接<br>
+用户登录验证<br>
+cookie &amp; session:<br>
+用户输入用户名、密码或者用短信验证码方式登录系统；<br>
+服务端验证后，创建一个 Session，并且将 SessionID 存到 cookie，将set cookie请求发送回浏览器；<br>
+客户端根据set cookie请求设置好带seesion信息的cookie<br>
+下次客户端再发起请求，自动带上 cookie 信息，服务端通过 cookie 获取 Session 信息进行校验；</p>
+<p>Cookie的问题:app不能用,cookie不能跨域<br>
+存进内存数据库的解决方法<br>
+用户输入用户名、密码或者用短信验证码方式登录系统；<br>
+服务端经过验证，将认证信息构造好的数据结构存储到 Redis 中，并将 key 值返回给客户端；<br>
+客户端拿到返回的 key，存储到 local storage 或本地数据库；<br>
+下次客户端再次请求，把 key 值附加到 header 或者 请求体中；<br>
+服务端根据获取的 key，到 Redis 中获取认证信息；</p>
+<p>没有赋值过或initialize过的变量都是typeof undefined<br>
+array.split<br>
+array.sort<br>
+array.reverse<br>
+array.join(&quot;&quot;) &quot;43142143&quot;<br>
+array.toString(); &quot;4,3,1,4,2,1,4,3&quot;<br>
+array.includes<br>
+array.splice (startIndex, length, somethingtoAdd1, somethingtoAdd2,...)  //modify original array<br>
+array.slice(startIndex,endIndex)  //doesn't modify original array</p>
+<p>parseFloat()<br>
+parseInt(string, radix) -&gt;将某进制的数字string parse成十进制整数 Error: parseInt(5, 2)<br>
+数字转进制string<br>
+numberObject.toString(radix);   //233.toString(16) = &quot;e9&quot;<br>
+数字string转数字<br>
+parseInt(string, radix)</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#es6-template-literals%E6%A8%A1%E6%9D%BF%E5%AD%97%E7%AC%A6%E4%B8%B2">ES6 template literals模板字符串</a></li>
+<li><a href="#inlineblockinline-block">Inline/block/inline-block</a></li>
+<li><a href="#overflow">overflow</a></li>
+<li><a href="#%E4%BD%8D%E7%BD%AE">位置</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E5%B1%85%E4%B8%AD">如何居中</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E5%81%9A%E5%87%BA%E9%80%8F%E6%98%8E%E8%BE%B9%E6%A1%86%E7%9A%84%E6%95%88%E6%9E%9C">如何做出透明边框的效果</a></li>
+<li><a href="#js%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F">js加载顺序</a></li>
+<li><a href="#webpack%E7%9A%84%E4%BD%9C%E7%94%A8-%E6%9C%89%E5%BE%88%E5%A4%9Ajs%E8%A6%81%E5%8A%A0%E8%BD%BD%E5%B9%B6%E4%B8%94%E4%BA%92%E7%9B%B8%E4%BE%9D%E8%B5%96%E5%BE%88%E5%AE%B9%E6%98%93%E5%87%BA%E9%94%99">webpack的作用 （有很多js要加载，并且互相依赖，很容易出错）</a></li>
+<li><a href="#cors">cors</a></li>
+<li><a href="#%E5%AE%9E%E7%8E%B0%E6%BB%9A%E5%8A%A8%E5%8A%A0%E8%BD%BD">实现滚动加载</a></li>
+<li><a href="#tcp-transmission-control-protocol">TCP transmission control protocol:</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/vue/">
+              <h3 class="post-title">
+                Vue学习笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

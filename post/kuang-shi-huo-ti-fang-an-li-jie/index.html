@@ -1,0 +1,188 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>旷视活体方案理解 | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="旷视活体方案理解 | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="第一遍获取token(活体识别前)
+https://faceid.com/pages/documents/37661898
+实名认证,更新证件有效期走 comparison_type =1 KYC认证
+要求必传idcard_name和idc..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              旷视活体方案理解
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-06-15
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="第一遍获取token活体识别前">第一遍获取token(活体识别前)</h1>
+<p>https://faceid.com/pages/documents/37661898</p>
+<h2 id="实名认证更新证件有效期走-comparison_type-1-kyc认证">实名认证,更新证件有效期走 comparison_type =1 KYC认证</h2>
+<p>要求必传idcard_name和idcard_number 身份证姓名和身份证号<br>
+身份证的idcard_name和idcard_number，前端通过OCR时获取并传参<br>
+非身份证则前端不传，由网关配置默认信息并补传<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623726409654.png" alt="" loading="lazy"></p>
+<h2 id="合同签署走comparison_type-0-人脸比对">合同签署走comparison_type =0 人脸比对</h2>
+<p>要求必传image_ref 人脸图片<br>
+人脸图片在&quot;实名认证&amp;更新证件有效期&quot;的活体识别后会上传并保存在网关<br>
+如果没有现有人脸图片，则跳转更新证件信息并引导活体<br>
+由网关获取现有人脸图片并传参</p>
+<h1 id="第二遍验证token活体识别并拿到活体数据后">第二遍验证token（活体识别并拿到活体数据后）</h1>
+<p>https://faceid.com/pages/documents/37662519<br>
+要求必传biz_token和meglive_data<br>
+biz_token为第一遍时获取token，meglive_data为活体识别拿到的活体数据</p>
+<p>sign和sign_version<br>
+sign由网关处理掉了，为了防止越权</p>
+<p>验证成功后返回image_best活体照片进行FTP上传保存<br>
+非身份证会返回报错2000：表示比对完成，活体验证通过，但待比对照片与参考照片，或参考照片中的至少一张，不是同一个人。因为我们非身份证是网关配置的假默认信息补传的，这种情况算成功。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E7%AC%AC%E4%B8%80%E9%81%8D%E8%8E%B7%E5%8F%96token%E6%B4%BB%E4%BD%93%E8%AF%86%E5%88%AB%E5%89%8D">第一遍获取token(活体识别前)</a>
+<ul>
+<li><a href="#%E5%AE%9E%E5%90%8D%E8%AE%A4%E8%AF%81%E6%9B%B4%E6%96%B0%E8%AF%81%E4%BB%B6%E6%9C%89%E6%95%88%E6%9C%9F%E8%B5%B0-comparison_type-1-kyc%E8%AE%A4%E8%AF%81">实名认证,更新证件有效期走 comparison_type =1 KYC认证</a></li>
+<li><a href="#%E5%90%88%E5%90%8C%E7%AD%BE%E7%BD%B2%E8%B5%B0comparison_type-0-%E4%BA%BA%E8%84%B8%E6%AF%94%E5%AF%B9">合同签署走comparison_type =0 人脸比对</a></li>
+</ul>
+</li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E9%81%8D%E9%AA%8C%E8%AF%81token%E6%B4%BB%E4%BD%93%E8%AF%86%E5%88%AB%E5%B9%B6%E6%8B%BF%E5%88%B0%E6%B4%BB%E4%BD%93%E6%95%B0%E6%8D%AE%E5%90%8E">第二遍验证token（活体识别并拿到活体数据后）</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/zhi-wen-andshou-shi-deng-lu/">
+              <h3 class="post-title">
+                指纹&amp;手势登录
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

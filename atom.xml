@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://dev.eserica.com/notebook/</id>
+    <title>刘大钰</title>
+    <updated>2026-02-10T03:42:12.065Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://dev.eserica.com/notebook/"/>
+    <link rel="self" href="https://dev.eserica.com/notebook/atom.xml"/>
+    <subtitle>刘大钰的个人日记</subtitle>
+    <logo>https://dev.eserica.com/notebook/images/avatar.png</logo>
+    <icon>https://dev.eserica.com/notebook/favicon.ico</icon>
+    <rights>All rights reserved 2026, 刘大钰</rights>
+    <entry>
+        <title type="html"><![CDATA[Remote tunnels and ports]]></title>
+        <id>https://dev.eserica.com/notebook/post/remote-tunnels-and-ports/</id>
+        <link href="https://dev.eserica.com/notebook/post/remote-tunnels-and-ports/">
+        </link>
+        <updated>2026-02-10T03:26:15.000Z</updated>
+        <content type="html"><![CDATA[<p>Ports (Private 192.168.1.51) -&gt; Public eserica.com -&gt; App<br>
+3169 -&gt; live.eserica.com -&gt; Vite<br>
+5244 -&gt; ftp.eserica.com -&gt; Alist<br>
+22 -&gt; ssh.eserica.com -&gt; OpenSSH<br>
+3389 -&gt; rdp.eserica.com -&gt; RDP</p>
+<p>Other exposures<br>
+ftp.eserica.com/dav -&gt; WebDAV<br>
+vscode.dev/tunnel/ldy681 -&gt; VSCode</p>
+<p>Cloudflared: https://one.dash.cloudflare.com/</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[券商挖坑笔记]]></title>
+        <id>https://dev.eserica.com/notebook/post/quan-shang-wa-keng-bi-ji/</id>
+        <link href="https://dev.eserica.com/notebook/post/quan-shang-wa-keng-bi-ji/">
+        </link>
+        <updated>2023-04-18T02:09:06.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="制品库配置">制品库配置</h1>
+<p>在C:\Users\XXX.npmrc中修改npm配置<br>
+将registry改为恒生制品库<br>
+registry=http://artifactory.hundsun.com/artifactory/api/npm/nw5-npm-virtual/</p>
+<p>将token信息填入<br>
+_auth =XXX<br>
+email = xxx@hundsun.com<br>
+always-auth = true</p>
+<h2 id="token获取">token获取</h2>
+<p>在效能平台点击头像 获取api-key</p>
+<h1 id="部署开发环境进行联调">部署开发环境进行联调</h1>
+<h2 id="打包">打包</h2>
+<p>打包前需要将index.js和hui.config.js恢复到初始文件<br>
+执行hui build --see进行打包</p>
+<h2 id="see运维">SEE运维</h2>
+<p>http://10.20.146.48:8081/acm/app.htm#/dashboard/application/list<br>
+admin  @Caifu123<br>
+应用是ocm_secu(uf2.0)<br>
+将打包后的产物上传到到应用管理-&gt;应用-&gt;应用配置-&gt;发布物<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681785507441.png" alt="" loading="lazy"></p>
+<h2 id="机构中台">机构中台</h2>
+<p>http://10.20.144.106:8088/frame-layout/login<br>
+admin 111111</p>
+<ul>
+<li>
+<p>进入系统菜单设置 - 将新增页面添加菜单<br>
+菜单编号由操作员中心提供，菜单图标由UED提供。添加菜单时，需要选应用名ocm_secu，菜单url-前端页面路径<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681785326784.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>进入功能权限设置<br>
+在页面同名的操作功能编号里关联API接口<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681785419449.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>如果有功能权限控制，进行配置，同样需要关联接口<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681785445302.png" alt="" loading="lazy"></p>
+</li>
+</ul>
+<h1 id="本地环境联调怎么办-需要登录">本地环境联调怎么办 (需要登录)</h1>
+<p>因为功能号等接口需要登录才能查询，本地起的环境没有嵌套主APP所以没法登录。所以需要主APP里配置嵌套到本地环境。<br>
+应用是frame-layout-uf2.0<br>
+进入应用管理-&gt;应用-&gt;应用配置-&gt;参数配置<br>
+在子应用配置中将ocm_secu容器的地址配置成本地环境的地址即可。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681812150427.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SSH执行远程script, command not found.]]></title>
+        <id>https://dev.eserica.com/notebook/post/ssh-zhi-xing-yuan-cheng-script-command-not-found/</id>
+        <link href="https://dev.eserica.com/notebook/post/ssh-zhi-xing-yuan-cheng-script-command-not-found/">
+        </link>
+        <updated>2023-02-22T07:08:08.000Z</updated>
+        <content type="html"><![CDATA[<p>问题：通过PUTTY进入，bash -s  &lt; xxx.sh可以正常运行。<br>
+远程SSH进入，并执行bash -s &lt; xxx.sh 报错npm command not found.</p>
+<pre><code># xxx.sh
+npm run start
+</code></pre>
+<p>原因: EXPORT PATH配在/etc/profile里。<br>
+/etc/profile 是账户的配置文件，login shell (如putty) 会读这里加载环境变量，所以command可以正常执行。<br>
+而通过命令行SSH并执行远程script，创建的是non-login shell，此时不会读/etc/profile。</p>
+<pre><code>ssh -p ${(remotePort )} -i ${privateKeyPath} ${sshServer} 'bash -s' &lt; ${script on remote machine}
+</code></pre>
+<p>/etc/bashrc 是bash shell的配置文件，通过远程ssh执行bash，需要在这里同样配置环境变量。</p>
+<pre><code># /etc/bashrc
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/usr/local/node/bin
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[银行基线挖坑笔记]]></title>
+        <id>https://dev.eserica.com/notebook/post/taro-wa-keng-bi-ji/</id>
+        <link href="https://dev.eserica.com/notebook/post/taro-wa-keng-bi-ji/">
+        </link>
+        <updated>2022-07-01T03:15:16.000Z</updated>
+        <content type="html"><![CDATA[<p>Taro行内样式转化规则无效<br>
+在编译时，Taro 会帮你对样式做尺寸转换操作，但是如果是在 JS 中书写了行内样式，那么编译时就无法做替换了，针对这种情况，Taro 提供了 API Taro.pxTransform 来做运行时的尺寸转换。</p>
+<pre><code>&lt;View className='index' style={{height:Taro.pxTransform(40)}}&gt;
+    &lt;Text className='text'&gt;Hello world!&lt;/Text&gt;
+&lt;/View&gt;
+</code></pre>
+<h1 id="appserver长啥样">AppServer长啥样</h1>
+<p>方法写在fundapp-service。<br>
+model/interface在父目录，implementation/class在/impl<br>
+class路径：<br>
+<code>fundapp-service\src\main\java\com\hundsun\fund\fundapp\service\product\impl\ProductServiceImpl.java</code><br>
+interface路径：<br>
+<code>fundapp-service\src\main\java\com\hundsun\fund\fundapp\service\product\ProductService.java</code></p>
+<p>Server routing/mapping写在fundapp-server<br>
+<code>fundapp-server\src\main\java\com\hundsun\fund\fundapp\server\product\ProductController.java</code></p>
+<ol>
+<li>
+<p>引入 fundapp/service/product目录下的ProductService.java<br>
+import com.hundsun.fund.fundapp.service.product.ProductService;</p>
+</li>
+<li>
+<p>使用引入的ProductService<br>
+主routing为/product/product，当get /product/product/productInfoList.json时调用productInfoList方法，该方法调用productService.productInfoList</p>
+</li>
+</ol>
+<pre><code>@Api(basePath = &quot;/product&quot;,value = &quot;产品信息&quot;,tags = &quot;产品信息&quot;)
+@Controller
+@RequestMapping(&quot;/product/product&quot;)
+public class ProductController {
+    @Autowired
+    private ProductService productService;
+
+    @ApiOperation(value = &quot;产品列表，客户端使用&quot;,response = ProductInfoVM.class)
+    @RequestMapping(value = &quot;/productInfoList.json&quot;,method = {RequestMethod.GET,RequestMethod.POST})
+    @ResponseBody
+    public ViewModelAdapter productInfoList(@ModelAttribute FundStateQueryParam param){
+        return productService.productInfoList(param);
+    }
+}
+</code></pre>
+<h1 id="原生打包配置">原生打包配置</h1>
+<h2 id="如何修改arr模板库">如何修改arr模板库</h2>
+<p>替换lib中的miniappgmu.aar<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924506551.png" alt="" loading="lazy"></p>
+<h2 id="如何修改前端模板库">如何修改前端模板库</h2>
+<p>可以直接将zip重命名为版本号后放进miniapp文件夹，文件夹中根据最高的版本号打包<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924393631.png" alt="" loading="lazy"></p>
+<h2 id="如何打离线包">如何打离线包</h2>
+<p>将编译好的文件放到stream/main/0.0.0中<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924581540.png" alt="" loading="lazy"></p>
+<h2 id="如何打远程包">如何打远程包</h2>
+<p>main.gmu中将默认main.vhost.light.com改为自己的本地地址。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924654409.png" alt="" loading="lazy"></p>
+<h3 id="如何指定路径和拼接入参">如何指定路径和拼接入参</h3>
+<p>后面填入pages页面路径，后面拼接入参。需要注意需要encodeURI。<br>
+encode之前：<br>
+<code>gmu://miniapp?standaloneMode=false&amp;startPage=http://192.168.137.1:4777/app.miniapp.js#pages/index/home?name=LDY681&amp;text=jsnToMiniprogramDemo</code><br>
+encode之后：<br>
+<code>gmu://miniapp?standaloneMode=false&amp;startPage=http%3A%2F%2F192.168.137.1%3A4777%2Fapp.miniapp.js%23pages%2Findex%2Fhome%3Fname%3DLDY681%26text%3DjsnToMiniprogramDemo</code></p>
+<h2 id="如何打摇一摇">如何打摇一摇</h2>
+<h3 id="需要增加以下6个依赖buildgradle中加入依赖">需要增加以下6个依赖，build.gradle中加入依赖</h3>
+<pre><code>    implementation(name: 'jsndebug', ext: 'aar')
+    implementation(name: 'lightviewpreview', ext: 'aar')
+    implementation(name: 'miniappdebug', ext: 'aar')
+    implementation(name: 'jsnativegmu', ext: 'aar')
+    implementation(name: 'barcodegmu-release', ext: 'aar')
+    implementation(name: 'servicegmu-release', ext: 'aar')
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://dev.eserica.com/notebook//post-images/1656925116136.png" alt="" loading="lazy"></figure>
+<h3 id="www中增加入口页面">www中增加入口页面</h3>
+<p>入口页面是带了摇一摇功能的几个tab页，第二个tab页可以直接点击进入默认的小程序 。配置地址方式和之前一样<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656925327476.png" alt="" loading="lazy"></p>
+<h3 id="app指向www页面">app指向www页面</h3>
+<p>通过web方式打开www中的index.html<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656925413587.png" alt="" loading="lazy"><br>
+现在研发中心支持3种方式<br>
+如果是js打头的，那么就是走原来老light的jsnative<br>
+如果是miniapp打头的，那么就是走小程序的lightweb<br>
+如果是web，那就是web<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656926499959.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Taro集成VantUI（not Vant-Weapp）]]></title>
+        <id>https://dev.eserica.com/notebook/post/taro-ji-cheng-vantuinot-vant-weapp/</id>
+        <link href="https://dev.eserica.com/notebook/post/taro-ji-cheng-vantuinot-vant-weapp/">
+        </link>
+        <updated>2021-11-12T03:20:21.000Z</updated>
+        <content type="html"><![CDATA[<p>package.json的dependencies需要增加依赖包</p>
+<pre><code>// 引入vant，同时引入plugin-html
+  &quot;dependencies&quot;: {
+    &quot;@tarojs/plugin-html&quot;: &quot;3.3.3&quot;,
+    &quot;vant&quot;: &quot;^2.12.13&quot;,
+  },
+</code></pre>
+<p>config/index.js用plugin-html注册pxtransformBlackList黑名单 (vant组件和自己封装的组件不走pxtransform)</p>
+<pre><code>  plugins: [
+    ['@tarojs/plugin-html', {
+      pxtransformBlackList: [/my-/, /van-/]
+    }]
+  ],
+</code></pre>
+<p>package.json的devDependencies增加babel preset和plugin import</p>
+<pre><code>&quot;devDependencies&quot;: {
+    &quot;babel-plugin-import&quot;: &quot;^1.13.3&quot;,
+    &quot;babel-preset-taro&quot;: &quot;3.3.0-alpha.8&quot;,
+  },
+</code></pre>
+<p>babel.config.js 编译时声明框架taro和引用组件库vant</p>
+<pre><code>module.exports = {
+  presets: [
+    ['taro', {
+      framework: 'vue',
+      ts: false
+    }]
+  ],
+  plugins: [
+    ['import', {
+      libraryName: 'vant',
+      libraryDirectory: 'es',
+      style: true
+    }, 'vant']
+  ]
+}
+</code></pre>
+<p>自己遇到的一个坑，vue-loader依赖任意版本css-loader，不指定则css-loader用最新，最新的css-loader依赖webpack 5。<br>
+webpack 5打包会报错Error: Rule can only have one resource source。<br>
+项目里其他node modules依赖webpack 4.46即可，所以指定webpack和css-loader版本如下：<br>
+···<br>
+&quot;devDependencies&quot;: {<br>
+&quot;vue-loader&quot;: &quot;^15.9.2&quot;,<br>
+&quot;webpack&quot;: &quot;^4.46.0&quot;<br>
+},<br>
+&quot;peerDependencies&quot;: {<br>
+&quot;css-loader&quot;: &quot;3.6.0&quot;<br>
+}<br>
+···</p>
+<p>自定义浏览器默认样式<br>
+可以直接全局引用taro提供的内置样式或者overwrite部分样式使VantUI正常<br>
+在app.less中加入</p>
+<pre><code>.h5-span {
+  display: inline;
+}
+
+.h5-button,
+.h5-input {
+  display: inline-block;
+}
+
+.h5-button::after {
+  border: none;
+}
+
+.van-button--hairline::after {
+  transform-origin: unset;
+  width: unset;
+  height: unset;
+}
+</code></pre>
+<p>app.js 引入自定义浏览器默认样式，引入并注册自封装组件</p>
+<pre><code>import './app.less'
+/** import customized components */
+import ActionSheet from './components/action-sheet'
+import Button from './components/button'
+import Image from './components/image'
+
+// Register customized components
+Vue.component(ActionSheet.name, ActionSheet)
+Vue.component(Button.name, Button)
+Vue.component(Image.name, Image)
+</code></pre>
+<p>通用样式和组件里使用，demo里样式搬的官方的，可以拿来参考。<br>
+src/style/var.less里定义通用样式变量<br>
+components/<componentName>组件里引用</p>
+<style lang="less">
+@import '../../style/var';
+.demo-button {
+  .van-button {
+    &--large {
+      margin-bottom: @padding-md;
+    }
+    &--small,
+    &--normal:not(:last-child) {
+      margin-right: @padding-md;
+    }
+  }
+}
+</style>
+<p>自封装组件格式：</p>
+<pre><code>&lt;template&gt;
+  &lt;div class=&quot;demo-component&quot;&gt;
+    &lt;van-component v-model=&quot;show&quot; :attr=&quot;attr&quot; @select=&quot;onSelect&quot; /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import Taro from '@tarojs/taro'
+import { Component } from 'vant'
+
+export default {
+  name: 'my-component',
+  components: {
+    'van-component': Component
+  },
+  props: { 
+    show: {
+      type: Boolean,
+      default: false
+    },
+    atrr: {
+        type: Array,
+        default: [
+        { name: 'option1' },
+        { name: 'option2' },
+        { name: 'option3' },
+      ]
+    }   
+  },
+  methods: {
+    onSelect(item) {
+      this.show = false;
+      Taro.showToast({
+        title: item.name,
+        icon: 'none'
+      })
+    },
+  },
+};
+&lt;/script&gt;
+
+&lt;style lang=&quot;less&quot;&gt;
+@import '../../style/var';
+.demo-component {
+  &amp;-content {
+    padding: @padding-md @padding-md @padding-md * 10;
+  }
+}
+&lt;/style&gt;
+</code></pre>
+<p>页面中(pages/index/index)使用</p>
+<pre><code>&lt;template&gt;
+  &lt;view&gt;
+    &lt;my-component :show=&quot;show&quot; /&gt;
+  &lt;/view&gt;
+&lt;/template&gt;
+</code></pre>
+<p>其他一些和适配无关但是和项目有关的配置<br>
+app.config.js pages指定项目中用到那些页面</p>
+<p>demo效果<br>
+<img src="https://dev.eserica.com/notebook//post-images/1636687906675.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[charles 抓包和mock响应]]></title>
+        <id>https://dev.eserica.com/notebook/post/charles-zhua-bao-he-mock-xiang-ying/</id>
+        <link href="https://dev.eserica.com/notebook/post/charles-zhua-bao-he-mock-xiang-ying/">
+        </link>
+        <updated>2021-07-30T01:37:15.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="charles-抓包">charles 抓包</h1>
+<p>如果抓手机APP的包，手机连本机WIFI<br>
+看代理-&gt;代理设置的端口号，charles默认是8888<br>
+手机热点设置里设置代理，输入本机IP和端口号。<br>
+电脑需要关闭防火墙，此时APP访问即可看到网络请求。</p>
+<h1 id="charles-mock响应">charles MOCK响应</h1>
+<p>选中接口右键保存响应，JSON格式的文件，本地修改响应数据<br>
+然后右键复制URL<br>
+工具本地映射-&gt;添加，把url放到主机里然后点外面，它会自己解析然后填充，映射到本地路径，选择刚才保存的JSON文件，然后确定<br>
+再次请求接口，这时候看到响应报文就是本地修改过的JSON了</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Xcode IOS版本不支持]]></title>
+        <id>https://dev.eserica.com/notebook/post/xcode-ios-ban-ben-bu-zhi-chi/</id>
+        <link href="https://dev.eserica.com/notebook/post/xcode-ios-ban-ben-bu-zhi-chi/">
+        </link>
+        <updated>2021-06-23T06:06:41.000Z</updated>
+        <content type="html"><![CDATA[<p>The current device configuration is unsupported. This iphone 11 is running ios 14.6 which is not supported by Xcode. 然后看了一下商店，Xcode最新更新记录只支持到14.5。怎么办呢？</p>
+<p>https://github.com/filsv/iPhoneOSDeviceSupport<br>
+找到该版本的设备支持文件，解压后然后复制到<br>
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[batch concurrency and pipeline]]></title>
+        <id>https://dev.eserica.com/notebook/post/batch-concurrency-and-pipeline/</id>
+        <link href="https://dev.eserica.com/notebook/post/batch-concurrency-and-pipeline/">
+        </link>
+        <updated>2021-06-22T02:55:02.000Z</updated>
+        <content type="html"><![CDATA[<p>首先cd到到指定盘卷D：，需要加d:<br>
+cd /d d:</p>
+<p>如果想要命令并发运行而不是一行一行运行的话，需要用start命令<br>
+格式为 start &quot;dummyTitle&quot; command param</p>
+<p>但是有一个问题，正常在cmd里使用pipeline是没有问题的<br>
+cd Tomcat/bin &amp; call ./startup.bat （√，两个指令都执行了）</p>
+<p>但是在start命令不支持多个命令pipeline<br>
+start &quot;tomcat&quot; cd Tomcat/bin &amp; call ./startup.bat (X，只会执行第一个指令)</p>
+<p>所以改成start命令实际只执行一个cmd命令，然后cmd命令的参数里传真实要运行的多个指令<br>
+start &quot;tomcat&quot; cmd /c &quot;cd Tomcat/bin &amp; call ./startup.bat&quot;</p>
+<p>最后结果：<br>
+一次性搭建网关，通讯机，和APP环境<br>
+cd /d d:<br>
+start &quot;tomcat&quot; cmd /c &quot;cd Tomcat/bin &amp; call ./startup.bat&quot;<br>
+start &quot;com&quot; cmd /c &quot;cd tongxunji-mock/bin &amp; call ./startComm.bat&quot;<br>
+start &quot;app&quot; cmd /c &quot;cd trust-fund/trustFund/trunk/html5 &amp; call ./startup.bat&quot;</p>
+<p>diff2html<br>
+diff -u XXX.vue XYZ.vue | diff2html -i stdin</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[prop，具名作用域插槽，多层组件attr和listener透传]]></title>
+        <id>https://dev.eserica.com/notebook/post/todozu-jian-propju-ming-zuo-yong-yu-cha-cao-v-binddollarattrsv-ondollarlisteners/</id>
+        <link href="https://dev.eserica.com/notebook/post/todozu-jian-propju-ming-zuo-yong-yu-cha-cao-v-binddollarattrsv-ondollarlisteners/">
+        </link>
+        <updated>2021-06-18T08:57:33.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="vue-prop父组件给子组件传参和作用域插槽子组件环境可在父组件的插槽内用">Vue prop(父组件给子组件传参)和作用域插槽(子组件环境可在父组件的插槽内用)</h1>
+<p><strong>Vue prop:</strong><br>
+Array和Object的default要向data一样用return的方式initialize<br>
+如果父组件绑定在子组件的变量发生更新，子组件通过watch方式检测变化然后进行改动<br>
+prop属性名要用kebab-case,因为html不区分大小写</p>
+<pre><code>//父组件
+&lt;sFundhisflot1
+    :adjust-info=&quot;adjustInfo&quot;   //kebab-case
+&gt;&lt;/sFundhisflot1&gt;
+
+//子组件
+props: {
+    adjustInfo: {   //object和array都要用return的方式initialize default
+        default: () =&gt; [],
+        type: Array
+    }
+},
+watch: {
+    adjustInfo(newVal) {    //watch来检测父组件的adjustInfo的变化
+        //do somthing
+    }
+},
+</code></pre>
+<p><strong>作用域插槽:</strong><br>
+父组件想让子组件的slot显示子组件的user对象的的firstName属性，但是父组件无法直接访问子组件的数据。那么子组件一个将 user 作为 <slot> 元素的 attribute 绑定上去，让 user 在父级的插槽内容中可用</p>
+<pre><code>    //父组件
+    具名插槽v-slot:firstName（template内容插到子组件的&lt;slot name=&quot;firstName&quot; /&gt;）
+    作用域插槽v-slot:firstName=&quot;slotProps&quot;（firstName插槽里v-bind的props可以在父组件通过slotProps访问），可以简写成#firstName=&quot;slotProps&quot;
+    &lt;current-user&gt;
+        &lt;template v-slot:firstName=&quot;slotProps&quot;&gt;
+            {{ slotProps.user.firstName }}
+        &lt;/template&gt;
+    &lt;/current-user&gt;
+
+    //子组件，通过在slot上添加v-bind将user传给给父组件
+    &lt;span&gt;
+        &lt;slot name=&quot;firstName&quot; v-bind:user=&quot;user&quot;&gt;&lt;/slot&gt;
+    &lt;/span&gt;
+</code></pre>
+<p><strong>理解 v-slot:activator=&quot;{ on, attrs }&quot;</strong><br>
+将activator slot组件的attrs和on作用域给父组件，使得父组件可以使用它的props和event。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1673506485770.png" alt="" loading="lazy"></p>
+<h1 id="v-bindattrs和v-bindpropsv-onlisteners-和native-多层组件透传">v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi mathvariant="normal">和</mi><mi>v</mi><mo>−</mo><mi>b</mi><mi>i</mi><mi>n</mi><mi>d</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot;和v-bind=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord cjk_fallback">和</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>props&quot;，v-on=&quot;$listeners&quot; 和.native 多层组件透传</h1>
+<p>将在高层组件v-on上注册的事件监听，和v-bind的没有被中间层识别(并获取)的属性和事件，一步步往下探，供底下的组件可用。如果中间层组件识别了事件和属性，该层可以使用这些事件和属性，但是下层就不能再用了。好处是不用props一层一层传了。</p>
+<p>v-bind=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">&quot;</mi><mi mathvariant="normal">：</mi><mi mathvariant="normal">父</mi><mi mathvariant="normal">组</mi><mi mathvariant="normal">件</mi><mi>t</mi><mi>a</mi><mi>g</mi><mi mathvariant="normal">上</mi><mi mathvariant="normal">绑</mi><mi mathvariant="normal">定</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">属</mi><mi mathvariant="normal">性</mi><mi>v</mi><mo>−</mo><mi>b</mi><mi>i</mi><mi>n</mi><mi>d</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">attrs&quot;： 父组件tag上绑定的属性
+v-bind=&quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord">&quot;</span><span class="mord cjk_fallback">：</span><span class="mord cjk_fallback">父</span><span class="mord cjk_fallback">组</span><span class="mord cjk_fallback">件</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord cjk_fallback">上</span><span class="mord cjk_fallback">绑</span><span class="mord cjk_fallback">定</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">属</span><span class="mord cjk_fallback">性</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span></span></span></span>props&quot;：如果想把父组件的props传给子组件，还可以这样，子组件在props中接收<br>
+v-on=&quot;$listeners&quot;：父组件tag上绑定的非.native修饰符的事件<br>
+.native：让事件仅在native处有效，信托h-textfield-advance用到了@click.native=&quot;&quot;，那么@click事件就不会传给下面了</p>
+<p>例子：<br>
+top组件，提供<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>t</mi><mi>t</mi><mi>r</mi><mi>s</mi><mi mathvariant="normal">有</mi><mi>n</mi><mi>a</mi><mi>m</mi><mi>e</mi><mo separator="true">,</mo><mi>a</mi><mi>g</mi><mi>e</mi><mo separator="true">,</mo><mi>g</mi><mi>e</mi><mi>n</mi><mi>d</mi><mi>e</mi><mi>r</mi><mo separator="true">,</mo><mi>f</mi><mi>o</mi><mi>o</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">attrs有name,age,gender,foo,</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">s</span><span class="mord cjk_fallback">有</span><span class="mord mathdefault">n</span><span class="mord mathdefault">a</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">e</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">o</span><span class="mord mathdefault">o</span><span class="mpunct">,</span></span></span></span>listeners有isClick和bar。</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;section&gt;
+    &lt;centers
+      name=&quot;name&quot;
+      age=&quot;18&quot;
+      gender=&quot;666&quot;
+      foo=&quot;foo&quot;
+      @isClick=&quot;isClick&quot;
+      @bar=&quot;bar&quot;
+    &gt;&lt;/centers&gt;
+  &lt;/section&gt;
+&lt;/template&gt;
+</code></pre>
+<p>center组件，吃掉属性name和age，没被吃掉的属性和事件会继续往下传。</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;section&gt;
+    &lt;div class=&quot;mt-10&quot;&gt;
+      &lt;bottom v-bind=&quot;$attrs&quot; v-on=&quot;$listeners&quot; /&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+  export default {
+    props: {
+      name: {
+        type: String,
+        default: 'default'
+      },
+      age: {
+        type: String,
+        default: 'default'
+      }
+    }
+  };
+&lt;/script&gt;
+</code></pre>
+<p>bottom组件，属性gender和事件isClick和bar，没有被center组件吃掉，所以在bottom组件中依然可用</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;section&gt;
+    &lt;div&gt;
+      {{ $attrs['gender'] }} 
+    &lt;/div&gt;
+  &lt;/section&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+  export default {
+    mounted() {
+      this.$listeners.isClick();
+      this.$listeners.bar();
+    }
+  };
+&lt;/script&gt;
+</code></pre>
+<p>参考资料：<br>
+https://www.cnblogs.com/jin-zhe/p/13099416.html</p>
+<h1 id="slots-父组件使用了哪些插槽">$slots 父组件使用了哪些插槽</h1>
+<p>父组件使用子组件，并插入foo和bar槽</p>
+<pre><code class="language-js">&lt;child&gt;
+      &lt;slot name=&quot;foo&quot; slot=&quot;foo&quot;&gt;&lt;/slot&gt;
+      &lt;slot name=&quot;bar&quot; slot=&quot;bar&quot;&gt;&lt;/slot&gt;
+&lt;/child&gt;
+</code></pre>
+<p>子组件判断是否有这些插槽，如果有blah blah blah<br>
+$slots打印出来有foo和bar两个Vnode</p>
+<pre><code class="language-js">&lt;div v-if=&quot;$slots.foo&quot; slot=&quot;foo&quot;&gt;
+    &lt;!-- something here --  &gt;
+&lt;/div&gt;
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[旷视活体方案理解]]></title>
+        <id>https://dev.eserica.com/notebook/post/kuang-shi-huo-ti-fang-an-li-jie/</id>
+        <link href="https://dev.eserica.com/notebook/post/kuang-shi-huo-ti-fang-an-li-jie/">
+        </link>
+        <updated>2021-06-15T03:00:53.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="第一遍获取token活体识别前">第一遍获取token(活体识别前)</h1>
+<p>https://faceid.com/pages/documents/37661898</p>
+<h2 id="实名认证更新证件有效期走-comparison_type-1-kyc认证">实名认证,更新证件有效期走 comparison_type =1 KYC认证</h2>
+<p>要求必传idcard_name和idcard_number 身份证姓名和身份证号<br>
+身份证的idcard_name和idcard_number，前端通过OCR时获取并传参<br>
+非身份证则前端不传，由网关配置默认信息并补传<br>
+<img src="https://dev.eserica.com/notebook//post-images/1623726409654.png" alt="" loading="lazy"></p>
+<h2 id="合同签署走comparison_type-0-人脸比对">合同签署走comparison_type =0 人脸比对</h2>
+<p>要求必传image_ref 人脸图片<br>
+人脸图片在&quot;实名认证&amp;更新证件有效期&quot;的活体识别后会上传并保存在网关<br>
+如果没有现有人脸图片，则跳转更新证件信息并引导活体<br>
+由网关获取现有人脸图片并传参</p>
+<h1 id="第二遍验证token活体识别并拿到活体数据后">第二遍验证token（活体识别并拿到活体数据后）</h1>
+<p>https://faceid.com/pages/documents/37662519<br>
+要求必传biz_token和meglive_data<br>
+biz_token为第一遍时获取token，meglive_data为活体识别拿到的活体数据</p>
+<p>sign和sign_version<br>
+sign由网关处理掉了，为了防止越权</p>
+<p>验证成功后返回image_best活体照片进行FTP上传保存<br>
+非身份证会返回报错2000：表示比对完成，活体验证通过，但待比对照片与参考照片，或参考照片中的至少一张，不是同一个人。因为我们非身份证是网关配置的假默认信息补传的，这种情况算成功。</p>
+]]></content>
+    </entry>
+</feed>

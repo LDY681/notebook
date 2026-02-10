@@ -1,0 +1,364 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>投顾学习笔记 | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="投顾学习笔记 | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="代码评审总结
+打印的消息在提交时都要去掉
+多次重复使用的部分可以封装成一个组件,比如待调仓封装成一个组件多个地方使用
+find,for of这些是ES6里面的语法,可以看一下打包后是否被转换成其他的函数,建议用es5的替代方法
+双循环遍历可..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              投顾学习笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-12-07
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="代码评审总结">代码评审总结</h1>
+<p>打印的消息在提交时都要去掉<br>
+多次重复使用的部分可以封装成一个组件,比如待调仓封装成一个组件多个地方使用<br>
+find,for of这些是ES6里面的语法,可以看一下打包后是否被转换成其他的函数,建议用es5的替代方法<br>
+双循环遍历可以把外面的数组做成keys,里面的直接用key去取会比较好<br>
+接口获取失败的情况下有些toast需要处理一下<br>
+相同路径的页面的跳转,传参时需要加一下usestorage是false.不然会走缓存,aftershow里就读不到参数了(仍可以用getviewParam获取)<br>
+缓存的情况是不同路径跳转(比如购买跳签约)且传输的数据比较大时可以使用,通过getviewparam从缓存的S_LIGHTVIEWDATA里获取参数,获取缓存时可以传个any: true<br>
+遍历对象不建议用for of,可以先object.keys获取keys然后forEach遍历<br>
+或者用封装好的$.each,对象和数据都可以用,也可以像find一样使用</p>
+<pre><code>$.each(jsonResult, (fund) =&gt; {
+    if (fund.businflag == '020'  || fund.businflag == '022' ) {
+        isSaleBuy = '1';
+        return false;
+    }
+})
+巧用数组的some.map,reduce方法会比forEach好 
+</code></pre>
+<h1 id="hsopenhsback等跳转方法">hsopen,hsback等跳转方法</h1>
+<p>相同路径的页面的跳转,传参时需要加一下usestorage是false.意思是不走缓存,走url传参.不然会走缓存,aftershow里就读不到参数了(缓存需要用getviewParam获取)<br>
+缓存的情况是不同路径跳转(比如购买跳签约)且传输的数据比较大时可以使用,通过getviewparam从缓存的S_LIGHTVIEWDATA里获取参数,获取缓存时可以传个any: true(不理会是否属于当前页面的缓存)</p>
+<p>hsopen在进行light.navigate之前会调用checkandprepareviewdata<br>
+checkandprepareviewdata会检查：</p>
+<ul>
+<li>如果传参userstorage是false，不走缓存，跳转后页面用aftershow获取data</li>
+<li>如果userstorage是true(走缓存,getviewparam)或者路径相同-&gt;如果缓存的key和currentPath不一致,修改key成currentPath以保持一致</li>
+<li>如果路径不同，如buy/buy-result跳转到asset/iia-asset，则清理缓存</li>
+</ul>
+<p>// getviewparam会检查缓存key和currentPath,不一致则hsBack<br>
+所以,当buy/buy-result通过hsback进入assest/iia-asset时,因为没有调用checkandprepareviewdata,缓存key没有被修改成currentPath,所以在使用getviewparam时,会因缓存key和currentPath不一致而导致hsback而跳转返回</p>
+<h1 id="clientauthid和authentification">clientauthid和authentification</h1>
+<p>因为采用单点登录，刚进入子项目时没有access_token。<br>
+所以第一次调接口时需要传参从父项目传来的clientauthid代替，接口返回后再把出参中的access_token存入缓存中<br>
+详见init.js-&gt;http.req函数<br>
+具体执行逻辑为<br>
+如果缓存中access_token为空，startReq()时access_token（即clientid字段）传“new”<br>
+⬇<br>
+http.jsonp() 这里会传入success和fail时的回调函数<br>
+⬇<br>
+succ后在执行回调函数前，调用updateClientidInStorageAndRv<br>
+⬇<br>
+updateClientidInStorageAndRv将返参里的access_token存入缓存</p>
+<h1 id="antv-f2走势图">AntV F2走势图</h1>
+<p>标签解决方案 https://f2.antv.vision/zh/examples/component/guide/#tag<br>
+描点解决方案 https://f2.antv.vision/zh/examples/line/multiple#customize-tootlip<br>
+折线变曲线方案: 在line后面加shape:<br>
+<code>chart.line().position('time*tem').shape('smooth');</code></p>
+<p>chart重新渲染，若内容样式改变导致样式重叠的问题：<br>
+<img src="https://dev.eserica.com/notebook//post-images/1607308141014.png" alt="" loading="lazy"><br>
+案例：近1月情况下，原来11-8号的tag在chart最左边，direct是tr。切换到近3月后，11-8号的tag在chart中间了，direct改变为tc。tl和tc的都保留在chart里，导致样式重叠了。<br>
+解决方案：<br>
+再渲染新的tag之前，把原先的tag先清理掉。</p>
+<pre><code>renderTag (tagPoints, chartData) {
+      this.chart.guide().clear();   //清理
+      //这里插入渲染tag代码
+}
+</code></pre>
+<p>关于render，clear，repaint，changeData等使用说明<br>
+https://f2.antv.vision/zh/docs/api/chart/chart#render</p>
+<h1 id="自带组件和weex组件">自带组件和weex组件</h1>
+<p>UIButton:</p>
+<pre><code>&lt;ui-button
+    class=&quot;flex-1 align-center justify-center&quot;
+    style=&quot;margin-left: 0px; margin-right: 0px; border-radius: 0px; height: 100%;&quot;  //内联样式 &gt; ID 选择器 &gt; class选择器 = 属性选择器 = 伪类选择器 &gt; 标签选择器 = 伪元素选择器，替换原ui-button组件自带的style
+    :style=&quot;combInfo.comb_shelf_status != '1'? '{background-color: #cccccc}': 'background-color: #fd6749'&quot;  //给按钮设置背景色后,disable了不会变灰,所以用这样动态绑定的形式给按钮后期上色(橙色/灰色)
+    @onclick=&quot;goChangeInto&quot; //click事件改成onclick,不然触发不了事件
+    :disabled=&quot;combInfo.comb_shelf_status != '1'&quot; &gt;
+        &lt;text class=&quot;font-18 m-color-5 t-center&quot;&gt;购买&lt;/text&gt;
+&lt;/ui-button&gt;
+</code></pre>
+<h1 id="weex-text无法自动换行问题">weex text无法自动换行问题</h1>
+<p>如果text的父元素比如div设置了flex-direction(flex-row, flex-column)，里面的text会无法自动换行，如果超长则溢出。<br>
+解决方法：给text加flex-1让其撑满整个容器,或者设置固定宽度,这样就可以换行了<br>
+但是如果一行里有多个text，其中一个特别长，就会长这样，看起来不美观。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1621564703040.png" alt="" loading="lazy"><br>
+这时候可以用richtext来实现一行多个text并处理超长情况：<br>
+richtext加flex-1，然后里面包裹多个span的text。记得richtext外要包一个div，不然可能父容器的样式会失效，比如父容器的div有个justify-content: center，如果不包div的话，就居中不了了。</p>
+<pre><code>&lt;div class=&quot;flex-row&quot;&gt;
+    &lt;richtext class=&quot;flex-1&quot;&gt;
+        &lt;span&gt;Blah Blah Blah&lt;/span&gt;
+        &lt;span&gt;Blah Blah Blah&lt;/span&gt;
+    &lt;/richtext&gt;
+&lt;/div&gt;
+</code></pre>
+<p>但是richtext会有无法动态更新的问题，如果data变化，richtext文字不会跟着一起刷新。解决办法是用一个v-if开关去重新生成组件。同时APP显示不了空格，所以需要判断在APP情况下加一个透明占位符</p>
+<pre><code>// richtext
+&lt;h-row&gt;
+    &lt;richtext class=&quot;flex-1&quot; v-if=&quot;showRichtext&quot;&gt;
+    &lt;span class=&quot;text-addressdetail&quot;&gt;{{formData.receive_address}}&lt;/span&gt;
+    &lt;!-- app显示不了空格，透明字体占位 --&gt;
+    &lt;span v-if=&quot;isApp&quot; style=&quot;color: transparent;&quot;&gt;s&lt;/span&gt;
+    &lt;span class=&quot;tag&quot; v-if=&quot;formData.is_default == '1'&quot;&gt;
+        &lt;span class=&quot;tag-text&quot;&gt;默认&lt;/span&gt;
+    &lt;/span&gt;
+    &lt;/richtext&gt;
+&lt;/h-row&gt;
+
+// v-if开关
+if (addressItem.receive_address_serialno) {
+    this.showRichtext = false;
+    // richtext不能动态更新，通过这种方法去重新生成组件
+    this.$nextTick(() =&gt; {
+        this.showRichtext = true;
+    })
+}
+</code></pre>
+<h1 id="flex布局-weex-默认的flex容器direction是column">Flex布局 !!!weex 默认的flex容器direction是column</h1>
+<p>正常flex默认布局<br>
+flex容器:<br>
+flex-direction: row<br>
+flex-wrap: nowrap   //不换行（也不溢出），超出长度则子元素缩小<br>
+align-items: stretch<br>
+justify-content: flex-start<br>
+子元素(项目)属性:<br>
+order: 0<br>
+flex-grow: 0 (不自动放大)<br>
+flex-shrink: 1 (自动缩小)<br>
+flex-basis: auto (占据主轴空间/子元素自身大小)</p>
+<p>不正常的weex flex布局<br>
+weex默认flex-direction 是COLUMN</p>
+<h1 id="tabbartop详解">tabbarTop详解</h1>
+<p>tabbar实际上是由tabbartop组件和底下的列表div组成<br>
+底下的列表为N个列表横向拼接而成,div样式由tabContainerStyle控制，width=750*N，N为tab的个数<br>
+tranform 为translateX(-750px * choseNumberActiveKey)<br>
+当choseNumberActiveKey为0时，显示X轴0到750px的页面，<br>
+当choseNumberActiveKey为1时，向左平移750px，显示X轴750px到1500px的页面</p>
+<pre><code>computed: {
+    tabContainerStyle () {
+        return {
+            width: (750*2) + 'px',
+            transform: `translateX(-${750 * this.choseNumberActiveKey}px)`
+        }
+    },
+}
+</code></pre>
+<p>combtablist父组件中引用tabbartop子组件</p>
+<pre><code>  &lt;tabbarTop :choseNumber.sync=&quot;choseNumberActiveKey&quot; :titleList=&quot;tabbarTitleList&quot;&gt;&lt;/tabbarTop&gt;
+</code></pre>
+<p>:choseNumber.sync 等于 v-on:update:choseNumber=&quot;choseNumberActiveKey = <code>$event</code>&quot;</p>
+<p>父组件的choseNumberActiveKey和子组件的choseNumber双向绑定。<br>
+tabbartop组件在tab点击后会调用choseClick,choseClick会触发update事件<br>
+<code>this.$emit(&quot;update:choseNumber&quot;, i);   //i为tab的index</code><br>
+父组件的choseNumberActiveKey会update成i<br>
+tabContainerStyle这边会根据新的choseNumberActiveKey值compute新的transform: translateX,导致列表div位移并显示正确的列表</p>
+<h1 id="动态变量名和模板字符串">动态变量名和模板字符串</h1>
+<pre><code>let foo = {bar: &quot;123&quot;};
+let bar2 = &quot;bar&quot;;
+动态变量名: foo[&quot;bar&quot;] = foo.bar = 123;
+模板字符串: foo[`${bar2}`] = foo[&quot;bar&quot;] = 123;  //注意使用反引号`而不是单引号'
+</code></pre>
+<p>this[<code>type${iterator.copywriting_type}Desc</code>] = iterator.copywriting_desc;<br>
+假如iterator.copywriting_desc是1，则以上等同于<br>
+this.type1Desc = iterator.copywriting_desc</p>
+<h1 id="vue检测不到array或者object的变化">Vue检测不到array或者object的变化</h1>
+<p>使用set方法:向响应式对象中添加一个 property(原先没有定义的)</p>
+<pre><code>this.array[0] = '1';    //错误
+Vue.set(this.array, 0, '1');    //正确
+</code></pre>
+<p>https://cn.vuejs.org/v2/api/index.html#Vue-set</p>
+<h1 id="一次请求用一个form就算两个请求传参一样也要建两个相同的form分别传">一次请求用一个form，就算两个请求传参一样，也要建两个相同的form分别传</h1>
+<p>原因：一个form，一次请求只能用一次。请求完后，他会把form里的内容给清掉。<br>
+用form.toStr或者toObject的时候要传false,不然也会清空form(蜜汁操作)</p>
+<h1 id="align-content-和-align-items">align-content 和 align-items</h1>
+<p>align-content整个容器居中<br>
+<img src="https://dev.eserica.com/notebook//post-images/1609383775075.png" alt="" loading="lazy"><br>
+align-items容器内每一行,分行居中<br>
+<img src="https://dev.eserica.com/notebook//post-images/1609383894705.jpg" alt="" loading="lazy"></p>
+<h1 id="vue风格指南">Vue风格指南</h1>
+<p>https://cn.vuejs.org/v2/style-guide/<br>
+重点关注:<br>
+组件/实例的选项的顺序:<br>
+name &gt; components &amp; filters &gt; props &amp; data &gt; computed &amp; watch &gt; hooks(create, mount,update,activate,destroy) &gt; methods<br>
+文件命名用PascalCase，HTML(template)里用kebab-case，JS(script)里用camelCase<br>
+组件大小写:</p>
+<pre><code>components/MyComponent.vue      //PascalCaseCase
+import MyComponent from './MyComponent.vue' //PascalCaseCase
+&lt;my-component/&gt;  //kebab-case
+</code></pre>
+<p>props大小写:</p>
+<pre><code>props: {
+  greetingText: String  //camelCase
+}
+&lt;WelcomeMessage greeting-text=&quot;hi&quot;/&gt;    //kebab-case
+</code></pre>
+<h1 id="bem-css命名规范">BEM CSS命名规范</h1>
+<p>BEM = Block + Element + Modifier<br>
+恒生项目里的BEM格式<br>
+block-element__modifer</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E4%BB%A3%E7%A0%81%E8%AF%84%E5%AE%A1%E6%80%BB%E7%BB%93">代码评审总结</a></li>
+<li><a href="#hsopenhsback%E7%AD%89%E8%B7%B3%E8%BD%AC%E6%96%B9%E6%B3%95">hsopen,hsback等跳转方法</a></li>
+<li><a href="#clientauthid%E5%92%8Cauthentification">clientauthid和authentification</a></li>
+<li><a href="#antv-f2%E8%B5%B0%E5%8A%BF%E5%9B%BE">AntV F2走势图</a></li>
+<li><a href="#%E8%87%AA%E5%B8%A6%E7%BB%84%E4%BB%B6%E5%92%8Cweex%E7%BB%84%E4%BB%B6">自带组件和weex组件</a></li>
+<li><a href="#weex-text%E6%97%A0%E6%B3%95%E8%87%AA%E5%8A%A8%E6%8D%A2%E8%A1%8C%E9%97%AE%E9%A2%98">weex text无法自动换行问题</a></li>
+<li><a href="#flex%E5%B8%83%E5%B1%80-weex-%E9%BB%98%E8%AE%A4%E7%9A%84flex%E5%AE%B9%E5%99%A8direction%E6%98%AFcolumn">Flex布局 !!!weex 默认的flex容器direction是column</a></li>
+<li><a href="#tabbartop%E8%AF%A6%E8%A7%A3">tabbarTop详解</a></li>
+<li><a href="#%E5%8A%A8%E6%80%81%E5%8F%98%E9%87%8F%E5%90%8D%E5%92%8C%E6%A8%A1%E6%9D%BF%E5%AD%97%E7%AC%A6%E4%B8%B2">动态变量名和模板字符串</a></li>
+<li><a href="#vue%E6%A3%80%E6%B5%8B%E4%B8%8D%E5%88%B0array%E6%88%96%E8%80%85object%E7%9A%84%E5%8F%98%E5%8C%96">Vue检测不到array或者object的变化</a></li>
+<li><a href="#%E4%B8%80%E6%AC%A1%E8%AF%B7%E6%B1%82%E7%94%A8%E4%B8%80%E4%B8%AAform%E5%B0%B1%E7%AE%97%E4%B8%A4%E4%B8%AA%E8%AF%B7%E6%B1%82%E4%BC%A0%E5%8F%82%E4%B8%80%E6%A0%B7%E4%B9%9F%E8%A6%81%E5%BB%BA%E4%B8%A4%E4%B8%AA%E7%9B%B8%E5%90%8C%E7%9A%84form%E5%88%86%E5%88%AB%E4%BC%A0">一次请求用一个form，就算两个请求传参一样，也要建两个相同的form分别传</a></li>
+<li><a href="#align-content-%E5%92%8C-align-items">align-content 和 align-items</a></li>
+<li><a href="#vue%E9%A3%8E%E6%A0%BC%E6%8C%87%E5%8D%97">Vue风格指南</a></li>
+<li><a href="#bem-css%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83">BEM CSS命名规范</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/leancloud/">
+              <h3 class="post-title">
+                LeanCloud+Node.js学习笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

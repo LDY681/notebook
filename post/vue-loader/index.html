@@ -1,0 +1,223 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vue Loader | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Vue Loader | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Vue loader的作用
+Vue-loader配置处理资源路径(资源url转换为webpack模块请求)
+e.g. src=&quot;../image.png&quot; =&gt; require(&quot;../image.png..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Vue Loader
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-15
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="vue-loader的作用">Vue loader的作用</h1>
+<p>Vue-loader配置处理资源路径(资源url转换为webpack模块请求)<br>
+e.g. src=&quot;../image.png&quot; =&gt; require(&quot;../image.png&quot;);<br>
+Vue-loader默认处理了video,source,img,image,use,所以我们才可以在配置attr时使用webpack路径,比如<code>&lt;image src=&quot;@/assets/images/xxx.png&quot; /&gt;</code><br>
+https://vue-loader.vuejs.org/guide/asset-url.html</p>
+<h1 id="vue-loader配置">Vue loader配置</h1>
+<p>那我们该怎么给自定义component配置呢?</p>
+<h2 id="方法1-webpackconfigjs">方法1 webpack.config.js</h2>
+<p>直接配在webpack.config.js,plugins中引入VueLoaderPlugin,然后module.rules里面指定test到什么表达式时load什么loader<br>
+https://vue-loader.vuejs.org/guide/#manual-setup</p>
+<pre><code>   plugins: [
+     new VueLoaderPlugin()
+   ],
+   module: {
+     rules: [
+       {
+         test: /\.vue$/,
+         loader: 'vue-loader'
+       }
+     ]
+   }, 
+</code></pre>
+<h2 id="方法2-vueconfigjs">方法2 vue.config.js</h2>
+<p>可是本项目用的是vue cli,要自定义webpack配置要怎么办呢? 欸,这个vue-cli文档里写了,可让我好找了一翻<br>
+在vue.config.js里chainWebpack,来修改webpack的config<br>
+https://cli.vuejs.org/guide/webpack.html#modifying-options-of-a-loader</p>
+<pre><code>  chainWebpack: (config) =&gt; {
+    config.module
+      .rule(&quot;vue&quot;)
+      .use(&quot;vue-loader&quot;)
+      .tap((options) =&gt; {
+        // 这里我们配置,转换v-img组件的src属性
+         options.transformAssetUrls = {
+             //blah blah blah
+             &quot;v-img&quot;: &quot;src&quot;,
+         }
+        return options
+      });
+  },
+</code></pre>
+<h1 id="动态绑定attr的问题">动态绑定attr的问题</h1>
+<p>我在方法2改写options之前打印了一下,实际可以看到,vue-loader的transformAssetUrls中已经包含了v-img<br>
+<img src="https://dev.eserica.com/notebook//post-images/1615962311171.png" alt="" loading="lazy"><br>
+在实际使用中,我们发现以下场景</p>
+<pre><code>&lt;v-img src=&quot;@/assets/images/inventory/item.png&quot; /&gt;  // 1.图片显示正常
+&lt;v-img :src=&quot;@/assets/images/inventory/' + item.image&quot; /&gt;  // 2.图片不显示
+</code></pre>
+<p>在场景1中,我们证实了v-img的src属性确实被webpack捕捉到并require了<br>
+但是为什么场景2中又不行了呢? <a href="https://github.com/vuejs-templates/webpack/issues/126">Evan在这里说明了情况</a></p>
+<blockquote>
+<p>Because the imagePath is only rendered by Vue at runtime, Webpack has no chance of rewriting it. In your JS, use require('~assets/' + this.country.name + '.jpg') instead. This allows Webpack to return the correct static path.</p>
+</blockquote>
+<p>因为是动态绑定的,imageUrl是runtime被渲染的,static的webpack无法捕捉然后转换成require(),所以动态src的情况下,我们还是得用requireΣ(っ °Д °;)っ</p>
+<pre><code>&lt;v-img :src=&quot;require('@/assets/images/inventory/' + item.image)&quot; /&gt;  // 3. 图片显示正常
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#vue-loader%E7%9A%84%E4%BD%9C%E7%94%A8">Vue loader的作用</a></li>
+<li><a href="#vue-loader%E9%85%8D%E7%BD%AE">Vue loader配置</a>
+<ul>
+<li><a href="#%E6%96%B9%E6%B3%951-webpackconfigjs">方法1 webpack.config.js</a></li>
+<li><a href="#%E6%96%B9%E6%B3%952-vueconfigjs">方法2 vue.config.js</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9Aattr%E7%9A%84%E9%97%AE%E9%A2%98">动态绑定attr的问题</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/zssanguo/">
+              <h3 class="post-title">
+                zssanguo开发笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,200 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>电子合同流程梳理&amp;附件拼接URL | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="电子合同流程梳理&amp;附件拼接URL | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="trade-history
+在当tradeInfo.operate_type是A3时根据电子合同的状态tradeInfo.contract_status是否为1决定进入contract-confirm确认合同，否则进入contract-ap..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              电子合同流程梳理&amp;附件拼接URL
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-30
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>trade-history<br>
+在当tradeInfo.operate_type是A3时根据电子合同的状态tradeInfo.contract_status是否为1决定进入contract-confirm确认合同，否则进入contract-apply补充信息。</p>
+<p>contract-apply<br>
+查询queryCustInfo并将身份信息填充，查询queryTrustBankCardInfo并将合同信息填充。<br>
+银行卡部分只显示鉴权银行卡，并且当只有1张时默认选择第一张，手机号用了CryptoJS将mobileno_internet_en解密成正常手机号。<br>
+非银行卡补充信息用的pop-picker，点击时触发onPicker(name),根据name匹配不同的字典（字典queryDict时查询了性别，职业，国籍生成dictMap），onPicker在pick里（pop-picker里）会根据value计算selectedValue（value不存在即首次打开未选择时默认为0，否则为选择值）并以此setSelectedIndex(picker里)，然后设置finsihCb，再完成后finishSelectCycle中触发回调。回调中将选择的index设置到pickerIndexMap[name]里并更新contractInfo。<br>
+银行卡用的pop-view。pop-view里为bank-info组件的数组和添加银行卡按钮，添加银行卡在完成后hsback三级回到contract-apply页面,选择银行卡onSelectedCard会将银行卡信息存在selectedCard里<br>
+下一步时会校验contractInfo和selectedCard并跳转到contract-confirm</p>
+<p>contract-confirm<br>
+查询个人信息queryCustInfo、查询交易流水queryTradeFlow、获取上一步补充信息：<br>
+contract_status为1（有合同查询交易申请）：getApplyInfo-&gt;querySavedContract-&gt; queryPurchaseApply<br>
+否则getApplyInfo-&gt; getApplyContract-&gt; queryContractForm查询合同交易表单)<br>
+然后将个人信息，交易流水和申请信息填充<br>
+同意签署onSubmit -&gt; jumpNext：<br>
+如果身份证且开启人脸识别，contract-liveface<br>
+否则以PDF签署，打开PDF预览回调后会打开contract-sign。addContractOrConfirmPdf-&gt;confirmPdf-&gt; openPdf-&gt; previewFileWithConfirm-&gt;goSignCA()</p>
+<p>Contract-sign<br>
+通过短信验证码确认签署<br>
+发送短信验证码getCode-&gt; contractService.sendcode，countdown-button用的button组件，如果isCountDowning屏蔽onclick的sendSmsCode（直接return）并颜色为灰色。<br>
+填写验证码verify-code组件 oncomplete时触发validateCode-&gt;contractService.sign，30秒后跳转contract-result</p>
+<p>Contract-result<br>
+queryCapitalStatus-&gt;historyService.queryTradeInfoList获取交款信息，capital_status状态为3已交款就隐藏缴款引导</p>
+<p>Contract-liveface（底下的loading时不显示的）<br>
+liveface-guide，onclick时startLiveface，会检测buss_flag为2是签署电子合同，调用getLiveToken-&gt;livefaceService.verifyFac-&gt;account/account/verifyFaceId获取biz_token，传参biz_token回调进行人脸识别this.liveface-&gt;livefaceService.liveDetection-&gt;LightSDK.native.callNative(&quot;livestill.startLiveStill&quot;)，成功后emit(“livefaceNext”)。然后contract-liveface在onLivefaceNext时会addContractOrConfirmPdf进行同contract-confirm的电子合同签署</p>
+<h1 id="附件拼接url">附件拼接URL</h1>
+<p>预览附件时拼接并传给SDK的URL是appbaseurl + path（getfiletoken返回来的）<br>
+真实环境appbaseurl是带齐活服务器地址的，但是咱们开发时appbaseurl只有后缀没有IP，及&quot;/trustgateway/&quot;。<br>
+所以自己开发的时候，route.js的previewFile里需要拼接一下方便自测。<br>
+电子合同需要'http://192.168.137.1:3000' + config.appBaseUrl。<br>
+合同查询和份额确认书在调用previewFile前会先加上/trustgateway/。<br>
+所以拼接'http://192.168.137.1:3000/' + url.substr(1)</p>
+<pre><code>    // !以下仅为自测方便，不能提交
+    if (/^\/downloadFile/.test(url) || /^\/account\/download\/downloadFile/.test(url)) {
+      url = ('http://192.168.137.1:3000' + config.appBaseUrl + url.substr(1));  // TODO 如果APP jsnative配的是在线文件，这里的appBaseUrl实际上比APP部署时少了地址，需要加上http://192.168.137.1:3000
+    }
+    // TODO 合同查询和份额确认书会把appbaseurl先拼上去 ，但是咱们拼的是/trustgateway/，还需要加 'http://192.168.137.1:3000
+    if (/^\/trustgateway\/account\/download\/downloadFile/.test(url)) {
+      url = ('http://192.168.137.1:3000/' + url.substr(1));  // TODO 如果APP jsnative配的是在线文件，这里的appBaseUrl实际上比APP部署时少了地址，需要加上http://192.168.137.1:3000
+    }
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E9%99%84%E4%BB%B6%E6%8B%BC%E6%8E%A5url">附件拼接URL</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/native/">
+              <h3 class="post-title">
+                原生拓展能力梳理
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

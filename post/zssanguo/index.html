@@ -1,0 +1,198 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>zssanguo开发笔记 | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="zssanguo开发笔记 | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="2021/02/15
+第一篇开发日志，开始记录以便以后查阅修改点和待做项。
+当前已实现的功能：
+登录页:
+//TODO 考虑介绍模块后再加点内容吧，因为介绍模块可折叠，所以视差特效看着不明显/(ㄒoㄒ)/~~
+背景parallex（填满整个..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              zssanguo开发笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-02-15
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="20210215">2021/02/15</h1>
+<p>第一篇开发日志，开始记录以便以后查阅修改点和待做项。<br>
+当前已实现的功能：<br>
+登录页:</p>
+<p>//TODO 考虑介绍模块后再加点内容吧，因为介绍模块可折叠，所以视差特效看着不明显/(ㄒoㄒ)/~~<br>
+背景parallex（填满整个浏览器窗口高度，下滑会有视差特效）<br>
+<img src="https://dev.eserica.com/notebook//post-images/1613396197530.gif" alt="" loading="lazy"><br>
+介绍expansion panels（点中的模块悬浮展示，其他模块收起）<br>
+弹窗    //TODO 加入回车触发登录/注册<br>
+→注册弹窗(注册前本地验证+网络验证)<br>
+→登录弹窗(网络验证) //TODO 本地验证</p>
+<p>导航栏:<br>
+参考了E-SIM的布局，左侧边栏是用户信息，新加了可以切换展开/收缩。PC大屏幕下菜单在右上角横置。那么问题来了，手机上呢？手机上把菜单做成右侧边栏了，且考虑占地方所以将两边都做成了临时态的（类似modal那种overlay）。。。以后有其他好的方案可以修改<br>
+<img src="https://dev.eserica.com/notebook//post-images/1613395013477.png" alt="" loading="lazy"><br>
+<img src="https://dev.eserica.com/notebook//post-images/1613395019189.png" alt="" loading="lazy"></p>
+<p>snackbar消息提示：<br>
+页面跳转后（比如登录/登出）以及页面内进行操作时显示提示消息</p>
+<p>modal弹窗提示：<br>
+//TODO 先挖坑</p>
+<p>全局状态管理：<br>
+//FIXME 导航栏根据用户状态判断是否需要展示导航栏。因为登录跳转后，从服务器请求的用户状态还没来得及返回，导致刚进入主页是没有导航栏的，必须手动刷新一下。考虑用其他方法判断登录状态？<br>
+当前保存的全局状态有:<br>
+users用户(用户状态)<br>
+tools 工具(全局工具类组件的状态)    //TODO 当前只有snackbar，后续增加modal</p>
+<p>路由管理：<br>
+路由管理做了以下事情：<br>
+页面跳转后，展示snackbar提示和modal弹窗（如果需要）<br>
+进入新页面回到顶部</p>
+<h1 id="20210329">2021/03/29</h1>
+<p>记一次问题解决，浏览器F5刷新后由原先view跳转到了主页。<br>
+在网上搜了很多资料，有的是路由匹配的优先顺序问题<code>{ path: '*', redirect: '/'  }</code>, https://stackoverflow.com/questions/59307620/vue-router-refresingf5-current-page<br>
+然而我们并没有做类似处理，不过以后再配这些或者404页面的时候，也要注意一下不要犯相同错误。</p>
+<p>直到看到这个贴（见comment），https://stackoverflow.com/questions/60361064/vuejs-route-redirect-on-refresh。 他是因为刷新后store state没了，导致router.beforeEach里islogged的逻辑触发重定向到了登录页。然后发现我犯了类似的错误，tcb里onLoginStateChanged观测loginState变化时，如果变为已登录状态，则触发登录（登录会修改store对的user state并跳转到home），如果变为未登录状态，则触发登出（清空user state并跳转到login）。因为刷新后onLoginStateChanged再次触发， 然后因为已登录状态，所以重定向去了home。修改方案为tcb里的onLoginStateChanged只修改store的user state，登录跳转home通过dispatch login后的回调来实现。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#20210215">2021/02/15</a></li>
+<li><a href="#20210329">2021/03/29</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/xintuo/">
+              <h3 class="post-title">
+                信托学习笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

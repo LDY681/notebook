@@ -1,0 +1,472 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>信托学习笔记 | 刘大钰</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1770694916209">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="信托学习笔记 | 刘大钰 - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="后端Datacenter, CRM, 账户服务管那些数据
+DC/CRM可以理解为一个东西，都是crmbase那个数据库。
+账户服务是单独的库，主要目的是支持手机号登录，以前只支持证件号登录
+账户服务将手机号和证件号做关联，在不改变原结构的基..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1770694916209" alt="">
+  </a>
+  <h1 class="site-title">
+    刘大钰
+  </h1>
+  <p class="site-description">
+    刘大钰的个人日记
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/LDY681" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              信托学习笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-02-04
+              </span>
+              <span>
+                16 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="后端datacenter-crm-账户服务管那些数据">后端Datacenter, CRM, 账户服务管那些数据</h1>
+<p>DC/CRM可以理解为一个东西，都是crmbase那个数据库。<br>
+账户服务是单独的库，主要目的是支持手机号登录，以前只支持证件号登录<br>
+账户服务将手机号和证件号做关联，在不改变原结构的基础上，支持通过手机号进行登录。</p>
+<h1 id="反向代理">反向代理</h1>
+<p>在浏览器上伪装成向本机IP的appServer发送请求<br>
+实际上是给远程服务器发送的请求,解决跨域的问题.<br>
+config.json中配置appBaseUrl，即接口服务地址，如果这里用相对域名/trustgateway，那么请求发送给的就是192.168.114.6:3000/trustgateway<br>
+project.json中proxy里面的配置key是/trustgateway，应该是当请求的地址匹配192.168.114.6:3000/trustgateway时，实际请求的是后面配的192.168.114.6:8080/trustgateway<br>
+在使用mock地址时，因为appBaseUrl和proxy不匹配，所以proxy并没有生效，但是mock服务器response header返回了access-control-allow-origin:192.168.114.6:3000,所以没有跨域报错.</p>
+<pre><code>//config.json
+  &quot;appBaseUrl&quot;: &quot;/trustgateway/&quot;,
+
+//project.json
+  &quot;pluginConfig&quot;: {
+  	&quot;proxy&quot;: {
+  		&quot;/trustgateway&quot;: &quot;http://192.168.114.6:8080/&quot; //此处为真实服务器地址
+  	}
+  }
+</code></pre>
+<h1 id="tomcat-开发环境业务网关服务器">TOMCAT 开发环境(业务网关)服务器</h1>
+<p>war包放在webapps里，跑tomcat时会自动解压生成项目文件夹<br>
+WEB-INF/classes/config<br>
+appServerConfig.properties    //appServer基础配置<br>
+appControlConfig.properties //如果部分配置在app写死,如果要修改app需要重新打包,所以将配置环境迁移至业务网关,app通过请求接口获取配置<br>
+privateConfig.properties    //客户个性化配置<br>
+WEB-INF/classes/application.properties //app.registry.address (注册中心地址，业务网关CRM等通过RPC协议统一注册到注册中心)</p>
+<p>改端口<br>
+conf/server.xml<br>
+<code>&lt;Connector port=&quot;8080&quot; protocol=&quot;HTTP/1.1&quot; connectionTimeout=&quot;20000&quot; redirectPort=&quot;8443&quot; URIEncoding=&quot;UTF-8&quot;/&gt;</code></p>
+<p>Tomcat产生logs<br>
+/logs</p>
+<p>war包产生logs<br>
+/bin/logs</p>
+<h1 id="nginx-host前端app并反向代理连接开发环境服务器">Nginx host前端app并反向代理连接开发环境服务器</h1>
+<p>``<br>
+开发环境的实现<br>
+/usr/local/nginx<br>
+server {<br>
+listen 8801;<br>
+server_name 10.20.146.48 ;<br>
+# 主页/, 打开的是/home/nginx/html5文件夹里的build出来的web app<br>
+location / {<br>
+root /home/nginx;<br>
+# try_files $uri $uri/ /index.html;<br>
+index index.html;<br>
+}<br>
+# 二级域名/trustgateway, 反向代理到开发环境服务器<br>
+location /trustgateway {<br>
+proxy_pass http://10.20.146.48:8094/trustgateway/;</p>
+<pre><code>            #为nginx配置的一些配置项，以此获取真实的访问地址
+            proxy_set_header Host $Host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Port $Server_port;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection &quot;upgrade&quot;;
+    }
+</code></pre>
+<p>}</p>
+<p>/home/nginx/html5<br>
+该文件夹下为build出来的web app<br>
+``</p>
+<h1 id="项目地址配置-反向代理">项目地址配置 (反向代理)</h1>
+<p>config.json appBaseUrl 指定了请求接口的服务器地址<br>
+信托项目为 /trustgateway/, 即发送req请求时,请求的地址为localhost:xxxx/trustygateway/<br>
+在浏览器上伪装成向本机IP的appServer发送请求<br>
+pluginConfig中指定了需要代理的真实服务器地址<br>
+即伪装成对本机IP(同域)的appServer发送请求,实际上请求的是&quot;http://10.20.xx.xx:xxxx/&quot;远程服务器<br>
+&quot;pluginConfig&quot;: {<br>
+&quot;proxy&quot;: {<br>
+&quot;/trustgateway&quot;: &quot;http://10.20.xx.xx:xxxx/&quot;<br>
+}<br>
+}</p>
+<h1 id="常用数据库表格">常用数据库表格</h1>
+<p>``<br>
+--短信验证码<br>
+select * from tsms_send order by L_serialno desc</p>
+<p>--字典表<br>
+select * from tdictionary</p>
+<p>--系统参数表<br>
+select * from tsysparameter</p>
+<p>--潜在用户表(只注册没有开过户的账号)<br>
+select * from tunregister</p>
+<p>--真实用户表<br>
+select * from tcustomerinfo</p>
+<p>-- 行情表<br>
+select * from tfundday</p>
+<p>OCI库配置<br>
+配置-首选项-链接-OCI库-配置成文件夹下的oci.dll<br>
+``</p>
+<h1 id="andriod-studio">andriod studio</h1>
+<p>将build好的web app放到android\src\main\assets\www中，andriod应用就可以本地访问页面（即lightdist里的js文件）<br>
+src/main/assets/gmu/main.gmu的gmu://jsnative#home是懒加载，类似vue router里的异步import。等同于为先import app.native.js,然后再import lightdist/index-home.native.js<br>
+main.gmu(tab菜单的配置) 是否预加载，菜单的title、路径、是否需要登录，导航栏和菜单配色<br>
+jsnative.gmu(tab页的配置) 菜单栏页面的配置(pageid,startPage,navigationbar)<br>
+因为其他页面的跳转都是走hsopen（然后通过传参来控制页面样式，比如navbartype来控制是否显示navbar），tab页的切换不走hsopen控制不了，所以在原生jsnative这里来配置tab页的样式。<br>
+记得修改config.json 这里配置appBaseUrl为真实服务器地址(有些原生的地方,比如启动的时候也会用到服务器)</p>
+<h2 id="热更新">热更新</h2>
+<p>通过采用服务器文件而不是本地文件，服务器文件更新时APP对应的文件也会自动更新。<br>
+jsnative.gmu:</p>
+<pre><code>&quot;inputParams&quot;:{
+    // 原先，等于用的是lightdist/index-home.native.js，每次更新都需要重新打包
+    &quot;startPage&quot;:&quot;app.native.js#/home&quot;
+    // 现在，重新编译服务器页面更新后，APP的home页面也跟着更新
+    &quot;startPage&quot;:&quot;http://192.168.137.237:3000/app.native.js#/home&quot;
+},
+</code></pre>
+<p>jsnative.gmu只对菜单页面进行了配置，那非tab页面要怎么热更新呢？<br>
+注：非tab页面是打包在tab页面下的，所以只需要将菜单页面全部改用服务器文件即可。</p>
+<p>@xxx对应的是src/main/res/values/xxx<br>
+@string/app_name：<br>
+src/main/res/values/string.xml<br>
+<string name="app_name">昆仑信托</string></p>
+<p>@string/safe_welcome_info:<br>
+safe_operation\src\main\res\values\strings.xml<br>
+<string name="safe_welcome_info">欢迎您</string></p>
+<p>com.hundsun.xxx 对应的是rc/main/java/com/hundsun/xxx<br>
+com.hundsun.fzfb.SetGetureActivity:<br>
+src/main/java/com/hundsun/fzfb/SetGetureActivity.java</p>
+<h1 id="生命钩子">生命钩子</h1>
+<p>aftershow实际上是在mounted中加入的（light对mounted进行了改写）。根据mode，可能比mounted先执行，或者比mounted后执行。信托中，不要用aftershow，在created中通过this.$query去查询传参。</p>
+<h1 id="broadcast">Broadcast</h1>
+<p>原生下用的是weex的BroadcastChannel注册，H5下用的是eventList<br>
+receive时将callback根据key值（事件名）注册到eventList里，当send触发时，将eventList里对应key的callback依一运行。</p>
+<h1 id="keep-alive">Keep-alive</h1>
+<p>Index.vue -&gt; keep-alive中:include=&quot;cacheViewList&quot;指定哪些页面会被keep alive. include匹配首先检查组件自身的 name 选项<br>
+比如supplement-bank.vue里,我们定义的是</p>
+<pre><code>export default {
+    name: 'supplement-bank' //this.$options.name
+}
+</code></pre>
+<p>所以我们在setCacheView时,要确保传进去的view名称和上面name保持一致</p>
+<pre><code>$.setCacheView(this.$options.name, true)
+$.setCacheView(&quot;supplement-bank&quot;, false)
+</code></pre>
+<p>在plugin.js router beforeRouteEnter时，router会判断如果to.meta.cache（即index.html中view的cache属性）是true，则调用setCacheView将to页面缓存</p>
+<p>setCacheView在index.vue重写了,定义为如果cache为true且cacheviewlist里没有,会把该页加入在keep-alive里的cacheviewlist</p>
+<p>在plugin.js router beforeRouteLeave时,如果from的cache是true,然后to页面的cacheview不包含from,会取消from页的缓存。这里判断了this.$options.name是否存在,所以如果要清from页缓存,需要给from组件定义name</p>
+<pre><code>// from.vue
+export default {
+    name: 'supplement-bank' //this.$options.name
+}
+</code></pre>
+<p>或者是to的cache是true,然后from页面的cacheview不包含to，取消to页的缓存。这里判断了to.meta.viewname是否存在,所以如果要清to页缓存,需要给to页指定viewname属性</p>
+<pre><code>// index.html
+&lt;view id=&quot;bankcard/supplement-bank&quot; cache=&quot;true&quot; viewname=&quot;supplement-bank&quot; parent=&quot;index&quot; async=&quot;true&quot; chunkname=&quot;add-bank&quot;/&gt;
+</code></pre>
+<p>交易记录/注册/忘记密码/买入/卖出/新增银行卡/活动记录/积分购买礼物这些页面被缓存了，其他页面不被缓存(即重新进入时会重新加载)</p>
+<h1 id="markrequest-storagegetorrequest">markRequest $.storage.getOrRequest</h1>
+<p>我们会发现有些页面(比如trust-list)没有keep alive,但是再次进入时没有再次请求接口，这是怎么回事呢？其实是$.storage.getOrRequest做了一层判断，getOrRequest(saveKey: String, request: Function, opts)；如果storage里有saveKey对应的数据，则从storage中获取数据；如果storage里没有，则调用request函数</p>
+<h1 id="v-bind-vs-v-bindattribute-vs-v-model-vs-sync-用一个父元素object设置多个子元素props">v-bind vs v-bind:attribute vs v-model vs sync 用一个父元素object设置多个子元素props</h1>
+<p>// binding an attribute<br>
+v-bind:attr=&quot;parentParam.attr&quot;<br>
+// binding an object of attributes<br>
+v-bind=&quot;parentParam&quot;<br>
+// binding an object of attributes and adding v-on update listener for each attribute<br>
+v-bind.sync=&quot;parentParam&quot;<br>
+//v-model vs .sync<br>
+.sync<br>
+<comp :value.sync="username" :age.sync="userAge" /><br>
+equivalent to<br>
+&lt;comp :value=&quot;username&quot; :age=&quot;userAge&quot; @update:name=&quot;val =&gt; userName = val&quot; @update:age=&quot;val =&gt; userAge = val&quot; /&gt;</p>
+<p>v-model<br>
+<comp v-model="userName" /><br>
+equivalent to<br>
+&lt;comp :value=&quot;username&quot; @input=&quot;val =&gt; username = val&quot; /&gt;</p>
+<p>Sync can bind multiple properties other than a single value property, uses @update rather than @input</p>
+<h1 id="indexvue-created的时候做了什么">Index.vue created的时候做了什么</h1>
+<ol>
+<li>自定义一些全局方法(loading,toast,showActionSheet,setCacheView)</li>
+<li>启动逻辑<br>
+2.1 如果是APP<br>
+-&gt;如果是home页；<br>
+-&gt;-&gt;如果APP首次启动（S_APP_LAUNCH为1，部分场景会导致index.vue被重新created了，我们只希望以下逻辑只执行一遍，所以需要做判断），$.trust.onAppLaunch清理缓存，checkpriagreement-&gt;PrivacyService.check检查隐私协议并弹窗-&gt;检查新手引导并弹窗<br>
+-&gt;-&gt;不管是不是首次启动，SafeOperation.firstPreVerify (检查指纹/手势登录：注册“下次打开APP（重启APP或进入后台时间过长导致重启）清空登录信息”，注册记录进入后台和进入前台时间，未登录则要求指纹/手势验证)，queryAppConfigs（查询并储存网关配置的APP配置）<br>
+-&gt;任何页面；<br>
+-&gt;-&gt;如果是index页:监听登录广播并清空dialog(原因，其他页面在未登录时dialog提醒，登录后需要把之前这些dialog给清除掉，通过置0时间戳signal,为0时watch会dialog.show = false),开启enableTabCheckLogin(筛选出needLogin的tab页,tab切换时,检查该页是否属于needLogin tabs,需要且未登录则跳转LOGIN,否则正常路由)<br>
+2.2 如果不是APP:<br>
+queryAppConfigs,开启enableTabCheckLogin(功能描述详见2.1)<br>
+<img src="https://dev.eserica.com/notebook//post-images/1619161653514.png" alt="" loading="lazy"></li>
+<li>登录预检permission.checkAfterLogin<br>
+web则在router.afterEach监听，APP则在Light.on('viewappear')监听，根据是否存在PRECHECK预检标签判断是否预检过，没有则callback运行步骤4，仅运行一次（运行后PRECHECK标签删除）</li>
+<li>检查指纹手势登录SafeOperation.afterLoginVerify<br>
+根据S_NOTIFYFPGL标签判断是否需要提示开启指纹手势登录，如果需要提示并且硬件支持&amp;用户没有开启过(getSafeOperation&amp;getSafeStatus)，则setSafeOperation(开启指纹/手势弹窗及调用原生方法),结束后callback运行步骤5</li>
+<li>$.trust.checkInvestorStateAfterLogin检查投资者状态<br>
+风险问卷是否过期,合格投资者是否过期,审核是否通过等,有异常根据actionType跳转不同页面<br>
+<img src="https://dev.eserica.com/notebook//post-images/1619161796173.jpg" alt="" loading="lazy"></li>
+</ol>
+<h1 id="原生中启动的一些逻辑">原生中启动的一些逻辑</h1>
+<p>配合上文步骤2的逻辑，原生启动时S_APP_LAUNCH置1，如果配置“下次启动清空登录信息”，则清空<br>
+Andriod下 WeexPlugins.java register:<br>
+<img src="https://dev.eserica.com/notebook//post-images/1619162106053.png" alt="" loading="lazy"></p>
+<h1 id="如何正确获取设备高度">如何正确获取设备高度</h1>
+<p>设备高度可以取weex.config.env</p>
+<pre><code>platform	String	Current running platform, could be &quot;Android&quot;, &quot;iOS&quot; or &quot;Web&quot;.
+weexVersion	String	The version of Weex SDK.
+appName         String	Mobile app name or browser name.
+appVersion	String	The version of current app.
+osName          String	The OS name, could be &quot;Android&quot; or &quot;iOS&quot;.
+osVersion	String	The version of current OS.
+deviceModel	String	Mobile phone device model. (native only)
+deviceWidth	Number	Screen resolution width.
+deviceHeight	Number	Screen resolution height.
+</code></pre>
+<p>组件相对位置可以取weex.requireModule('dom').getComponentRect(this.$refs.component)</p>
+<pre><code>{
+  result: true,
+  size: {
+    bottom: 60,
+    height: 15,
+    left: 0,
+    right: 353,
+    top: 45,
+    width: 353
+  }
+}
+</code></pre>
+<p>weex在不同设备的缩放比scale是不一样的，所以取实际高度时需要除以scale<br>
+deviceHeight = deviceHeight / scale</p>
+<h1 id="vuefilter-thisoptionsfilters">Vue.filter &amp; this.$options.filters</h1>
+<p>一般filter都是在template中以pipeline形式使用。当我们想在script中使用filter时，我们可以使用this.$options.filters（本地与全局定义Vue.filter或者mixin混入Vue.mixin({filters: {}})都可以使用），可以在component方法(methods, computed)和lifecycle方法(created，mounted)等场景使用。</p>
+<pre><code>filters: {
+    imgSrc (path) {
+        return  $.config.appBaseUrl + 'productFile/getFtpImg.json?filePath=' + encodeURIComponent(path)
+    }
+},
+computed: {
+    imageList () {
+        return this.record.activity_picurl_detail.map((it) =&gt; ({ src: this.$options.filters.imgSrc(it) }))
+    }
+},
+</code></pre>
+<h1 id="array-一些方法">array 一些方法</h1>
+<p>array.map() 遍历生成新数组(对原数组的所有元素进行mutate,不能remove element,如果需要新数组除掉原数组的部分元素,考虑array.filter().map()，或者array.reduce(性能差点))</p>
+<pre><code>let newArray = array.map((item) =&gt; ({ value: item.name }));
+</code></pre>
+<p>array.find() 可以用来找array of objects</p>
+<pre><code>let obj = array.find( ({ name }) =&gt; name === 'abc' );
+</code></pre>
+<p>array.reduce() 遍历根据reducer方法累积,然后输出到initialValue里</p>
+<pre><code>//currentIndex, array和initialValue选填
+arr.reduce(callback( accumulator, currentValue, currentIndex, array), initialValue)
+//遍历array of objects
+let obj = array.reduce( (accumulator, currentValue) =&gt; accumulator.concat(currentValue), []);
+</code></pre>
+<p>array.sort(compareFunction(a,b)) 也可用来sort array of objects</p>
+<pre><code>如果compareFunction(a,b) return &gt; 0, sort b before a
+array.sort((a, b) =&gt; a - b);
+</code></pre>
+<h1 id="call-apply-bind">call, apply, bind</h1>
+<p>call和apply直接调用函数<br>
+call用,隔开参数 obj.myFun.call(db, '123', 'abc')<br>
+apply用array传参 obj.myFun.apply(db, ['123', 'abc'])<br>
+bind返回的是一个新函数,传参和call一样<br>
+var newFunction = obj.myFun.bind(db, '123', 'abc');<br>
+调用: obj.myFun.bind(db, '123', 'abc')();</p>
+<h1 id="通用拦截判断-permissioncheck">通用拦截判断 permission.check</h1>
+<p>如果在页面跳转时报错或者跳转到了登录，且发现当前页面和目标页面都没有该逻辑判断，很有可能是在init.js改写的hsopen中发生的，这里判断了permission.check。</p>
+<h2 id="visitconfig-对一些页面的权限进行了限制">visitConfig 对一些页面的权限进行了限制：</h2>
+<p>比如：'^rewards/rewards-': 'PS'   //PS代表个人<br>
+意思是rewards旗下页面只有个人权限可以访问，机构用户下，发现页面不展示积分商城rewards-market</p>
+<h2 id="checkrole-对用户状态进行了限制">checkRole 对用户状态进行了限制</h2>
+<p>调用checkCustInfo并对checkResult中的各个flag进行判断<br>
+比如：checkResult.hgflagNotExpired（HGNE 合格投资者未过期），过期则将对应的HGNE flag加入到checkPass里(checkPass.push('HGNE'))，并返回error(checkPass, jsonResult);<br>
+init.js在permission.check返回error的情况下调用$.trust.checkInvestorState()，用于页面跳转时权限拦截，针对投资者状态，showDialog不同的提示，并hsopen跳转到对应认证或修改信息页面</p>
+<h2 id="safeoperationverify-未登录则指纹面容手势验证或跳转登录页">SafeOperation.verify 未登录则指纹/面容/手势验证或跳转登录页</h2>
+<p>调用SafeOperation.verify 进行指纹/面容/手势等验证，如果没问题，则通过callNative调用相应的原生验证方法。如果没有开启指纹/面容认证或者认证失败了，会triggerLogout并直接hsopen到LOGIN页面或者next()回调，回调也会next到LOGIN页面<br>
+条件1：如果找到了visitConfig里该页面的role权限，但是检测到未登录状态<br>
+条件2：如果该页没有定role权限，页面路径是LOGIN（应对其他的check导致hsopen(LOGIN)的情况。比如我们在hsopen('blahblah')时check导致了hsopen(LOGIN),这时会进入条件2）</p>
+<h2 id="reporterjs-和环境信息管理系统">reporter.js 和环境信息管理系统</h2>
+<p>reporter.js重定义了 Vue.prototype.$throw。会调用handleError -&gt; collectJsError -&gt; $.http.post （最终post到环境信息管理系统）。不方便原生弹窗报错的话，可以用throw方法， 将报错信息post到环境信息管理系统方便查看。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1619074196996.png" alt="" loading="lazy"><br>
+post到这里<br>
+<img src="https://dev.eserica.com/notebook//post-images/1619074244076.png" alt="" loading="lazy"></p>
+<p>在http://192.168.70.249:9000/sensorslog 上查看<br>
+<img src="https://dev.eserica.com/notebook//post-images/1619074289636.png" alt="" loading="lazy"></p>
+<p>如何自己搭建<br>
+https://git01.hundsun.com/xiaqj19255/pem</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%90%8E%E7%AB%AFdatacenter-crm-%E8%B4%A6%E6%88%B7%E6%9C%8D%E5%8A%A1%E7%AE%A1%E9%82%A3%E4%BA%9B%E6%95%B0%E6%8D%AE">后端Datacenter, CRM, 账户服务管那些数据</a></li>
+<li><a href="#%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86">反向代理</a></li>
+<li><a href="#tomcat-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E4%B8%9A%E5%8A%A1%E7%BD%91%E5%85%B3%E6%9C%8D%E5%8A%A1%E5%99%A8">TOMCAT 开发环境(业务网关)服务器</a></li>
+<li><a href="#nginx-host%E5%89%8D%E7%AB%AFapp%E5%B9%B6%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E8%BF%9E%E6%8E%A5%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%9C%8D%E5%8A%A1%E5%99%A8">Nginx host前端app并反向代理连接开发环境服务器</a></li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80%E9%85%8D%E7%BD%AE-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86">项目地址配置 (反向代理)</a></li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E6%A0%BC">常用数据库表格</a></li>
+<li><a href="#andriod-studio">andriod studio</a>
+<ul>
+<li><a href="#%E7%83%AD%E6%9B%B4%E6%96%B0">热更新</a></li>
+</ul>
+</li>
+<li><a href="#%E7%94%9F%E5%91%BD%E9%92%A9%E5%AD%90">生命钩子</a></li>
+<li><a href="#broadcast">Broadcast</a></li>
+<li><a href="#keep-alive">Keep-alive</a></li>
+<li><a href="#markrequest-storagegetorrequest">markRequest $.storage.getOrRequest</a></li>
+<li><a href="#v-bind-vs-v-bindattribute-vs-v-model-vs-sync-%E7%94%A8%E4%B8%80%E4%B8%AA%E7%88%B6%E5%85%83%E7%B4%A0object%E8%AE%BE%E7%BD%AE%E5%A4%9A%E4%B8%AA%E5%AD%90%E5%85%83%E7%B4%A0props">v-bind vs v-bind:attribute vs v-model vs sync 用一个父元素object设置多个子元素props</a></li>
+<li><a href="#indexvue-created%E7%9A%84%E6%97%B6%E5%80%99%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88">Index.vue created的时候做了什么</a></li>
+<li><a href="#%E5%8E%9F%E7%94%9F%E4%B8%AD%E5%90%AF%E5%8A%A8%E7%9A%84%E4%B8%80%E4%BA%9B%E9%80%BB%E8%BE%91">原生中启动的一些逻辑</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E6%AD%A3%E7%A1%AE%E8%8E%B7%E5%8F%96%E8%AE%BE%E5%A4%87%E9%AB%98%E5%BA%A6">如何正确获取设备高度</a></li>
+<li><a href="#vuefilter-thisoptionsfilters">Vue.filter &amp; this.$options.filters</a></li>
+<li><a href="#array-%E4%B8%80%E4%BA%9B%E6%96%B9%E6%B3%95">array 一些方法</a></li>
+<li><a href="#call-apply-bind">call, apply, bind</a></li>
+<li><a href="#%E9%80%9A%E7%94%A8%E6%8B%A6%E6%88%AA%E5%88%A4%E6%96%AD-permissioncheck">通用拦截判断 permission.check</a>
+<ul>
+<li><a href="#visitconfig-%E5%AF%B9%E4%B8%80%E4%BA%9B%E9%A1%B5%E9%9D%A2%E7%9A%84%E6%9D%83%E9%99%90%E8%BF%9B%E8%A1%8C%E4%BA%86%E9%99%90%E5%88%B6">visitConfig 对一些页面的权限进行了限制：</a></li>
+<li><a href="#checkrole-%E5%AF%B9%E7%94%A8%E6%88%B7%E7%8A%B6%E6%80%81%E8%BF%9B%E8%A1%8C%E4%BA%86%E9%99%90%E5%88%B6">checkRole 对用户状态进行了限制</a></li>
+<li><a href="#safeoperationverify-%E6%9C%AA%E7%99%BB%E5%BD%95%E5%88%99%E6%8C%87%E7%BA%B9%E9%9D%A2%E5%AE%B9%E6%89%8B%E5%8A%BF%E9%AA%8C%E8%AF%81%E6%88%96%E8%B7%B3%E8%BD%AC%E7%99%BB%E5%BD%95%E9%A1%B5">SafeOperation.verify 未登录则指纹/面容/手势验证或跳转登录页</a></li>
+<li><a href="#reporterjs-%E5%92%8C%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F">reporter.js 和环境信息管理系统</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/hundsun/">
+              <h3 class="post-title">
+                投顾学习笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
