@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://dev.eserica.com/notebook/</id>
+    <title>刘大钰</title>
+    <updated>2026-07-08T07:21:02.946Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://dev.eserica.com/notebook/"/>
+    <link rel="self" href="https://dev.eserica.com/notebook/atom.xml"/>
+    <subtitle>刘大钰的个人日记</subtitle>
+    <logo>https://dev.eserica.com/notebook/images/avatar.png</logo>
+    <icon>https://dev.eserica.com/notebook/favicon.ico</icon>
+    <rights>All rights reserved 2026, 刘大钰</rights>
+    <entry>
+        <title type="html"><![CDATA[Skelotonisation -> Tortuosity (MATLAB)]]></title>
+        <id>https://dev.eserica.com/notebook/post/skelotonisation-greater-tortuosity-matlab/</id>
+        <link href="https://dev.eserica.com/notebook/post/skelotonisation-greater-tortuosity-matlab/">
+        </link>
+        <updated>2026-07-08T07:18:32.000Z</updated>
+        <content type="html"><![CDATA[<p>This is the smoothing and link selection strategy that has been adopted in the Matlab version of OCTAVA for reference, the current Python version adapts a different smoother strategy.</p>
+<p><img src="https://dev.eserica.com/notebook//post-images/1783495150573.jpg" alt="" loading="lazy"><br>
+<img src="https://dev.eserica.com/notebook//post-images/1783495152801.jpg" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Fuzzy C-Means Clustering]]></title>
+        <id>https://dev.eserica.com/notebook/post/fuzzy-c-means-clustering/</id>
+        <link href="https://dev.eserica.com/notebook/post/fuzzy-c-means-clustering/">
+        </link>
+        <updated>2026-07-03T03:16:38.000Z</updated>
+        <content type="html"><![CDATA[<p><em>FUZZY</em><br>
+<strong>normalisation</strong>: normalized image using mean+2std<br>
+⬇<br>
+<strong>denoising</strong>: gaussian conv kernel with kernel_size=11, sigma=1.5 (gaussian bell-curve distribution, heavily weighting the center pixel VS box blur)<br>
+⬇<br>
+<strong>threshold</strong>: cmeans (two clusters centers of darker vs lighter pixels [0, 1])<br>
+⬇<br>
+<strong>trapezoid membership</strong> (4 vertices [a,b,c,d] in a trapezoid to represent [0-1], [1-1], [1-0] ranges), find degree of membership of a pixel to either [0, 1] cluster<br>
+e.g. uG(x) = degree of element X belongs to a member of Group G = (x-a)/(b-a) if a &lt; x &lt; b, means partial membership<br>
+by setting either ab or cd to the one cluster center and the counterparts cd or ab to the min/max from the smoothed map<br>
+find degree to either dark group or light group e.g. [:, :, 0] = 0.2, [:, :, 1] = 0.8<br>
+⬇<br>
+<strong>cleanup</strong>: median filter with window_size=3<br>
+⬇<br>
+<strong>normalisation</strong>: argmax on the 3rd axis =&gt; argmax([:, :, 0] = 0.2, [:, :, 1] = 0.8) =  1</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Factal Dimension with customised box_size ranges]]></title>
+        <id>https://dev.eserica.com/notebook/post/factal-dimension-with-customised-box_size-ranges/</id>
+        <link href="https://dev.eserica.com/notebook/post/factal-dimension-with-customised-box_size-ranges/">
+        </link>
+        <updated>2026-07-01T05:58:52.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://dev.eserica.com/notebook//post-images/1782885748696.jpeg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://dev.eserica.com/notebook//post-images/1782885756063.jpeg" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Sub-Region Analysis]]></title>
+        <id>https://dev.eserica.com/notebook/post/sub-region-analysis/</id>
+        <link href="https://dev.eserica.com/notebook/post/sub-region-analysis/">
+        </link>
+        <updated>2026-06-18T03:30:16.000Z</updated>
+        <content type="html"><![CDATA[<p>Up and downs: Superior, Inferior<br>
+Left and Right: Nasal, Temporal (varies for Left OS /Right OD Eye)<br>
+<img src="https://dev.eserica.com/notebook//post-images/1781753555246.png" alt="" loading="lazy"></p>
+<p>Octant breakdowns:<br>
+Labels in <strong>black</strong>: Right OD Eye<br>
+Labels in <strong>red</strong>: Left OS Eye<br>
+<img src="https://dev.eserica.com/notebook//post-images/1781753467606.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Hessian-based Filters (FRANGI + JERMAN)]]></title>
+        <id>https://dev.eserica.com/notebook/post/octa-binarisation-frangi-fuzzy-cmeans/</id>
+        <link href="https://dev.eserica.com/notebook/post/octa-binarisation-frangi-fuzzy-cmeans/">
+        </link>
+        <updated>2026-06-12T03:36:09.000Z</updated>
+        <content type="html"><![CDATA[<p><img src="https://dev.eserica.com/notebook//post-images/1783048647391.png" alt="" loading="lazy"><br>
+<img src="https://dev.eserica.com/notebook//post-images/1783048654228.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[OCTAVA Canvas Editor]]></title>
+        <id>https://dev.eserica.com/notebook/post/octava-canvas-editor/</id>
+        <link href="https://dev.eserica.com/notebook/post/octava-canvas-editor/">
+        </link>
+        <updated>2026-06-12T03:33:24.000Z</updated>
+        <content type="html"><![CDATA[<p>Editor with window resize, zoom in/out, pan offset and click events</p>
+<figure data-type="image" tabindex="1"><img src="https://dev.eserica.com/notebook//post-images/1781235351280.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Remote tunnels and ports]]></title>
+        <id>https://dev.eserica.com/notebook/post/remote-tunnels-and-ports/</id>
+        <link href="https://dev.eserica.com/notebook/post/remote-tunnels-and-ports/">
+        </link>
+        <updated>2026-02-10T03:26:15.000Z</updated>
+        <content type="html"><![CDATA[<p>Ports (Private 192.168.1.51) -&gt; Public eserica.com -&gt; App<br>
+3169 -&gt; live.eserica.com -&gt; Vite<br>
+5244 -&gt; ftp.eserica.com -&gt; Alist<br>
+22 -&gt; ssh.eserica.com -&gt; OpenSSH<br>
+3389 -&gt; rdp.eserica.com -&gt; RDP</p>
+<p>Other exposures<br>
+ftp.eserica.com/dav -&gt; WebDAV<br>
+vscode.dev/tunnel/ldy681 -&gt; VSCode</p>
+<p>Cloudflared: https://one.dash.cloudflare.com/</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[券商挖坑笔记]]></title>
+        <id>https://dev.eserica.com/notebook/post/quan-shang-wa-keng-bi-ji/</id>
+        <link href="https://dev.eserica.com/notebook/post/quan-shang-wa-keng-bi-ji/">
+        </link>
+        <updated>2023-04-18T02:09:06.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="制品库配置">制品库配置</h1>
+<p>在C:\Users\XXX.npmrc中修改npm配置<br>
+将registry改为恒生制品库<br>
+registry=http://artifactory.hundsun.com/artifactory/api/npm/nw5-npm-virtual/</p>
+<p>将token信息填入<br>
+_auth =XXX<br>
+email = xxx@hundsun.com<br>
+always-auth = true</p>
+<h2 id="token获取">token获取</h2>
+<p>在效能平台点击头像 获取api-key</p>
+<h1 id="部署开发环境进行联调">部署开发环境进行联调</h1>
+<h2 id="打包">打包</h2>
+<p>打包前需要将index.js和hui.config.js恢复到初始文件<br>
+执行hui build --see进行打包</p>
+<h2 id="see运维">SEE运维</h2>
+<p>http://10.20.146.48:8081/acm/app.htm#/dashboard/application/list<br>
+admin  @Caifu123<br>
+应用是ocm_secu(uf2.0)<br>
+将打包后的产物上传到到应用管理-&gt;应用-&gt;应用配置-&gt;发布物<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681785507441.png" alt="" loading="lazy"></p>
+<h2 id="机构中台">机构中台</h2>
+<p>http://10.20.144.106:8088/frame-layout/login<br>
+admin 111111</p>
+<ul>
+<li>
+<p>进入系统菜单设置 - 将新增页面添加菜单<br>
+菜单编号由操作员中心提供，菜单图标由UED提供。添加菜单时，需要选应用名ocm_secu，菜单url-前端页面路径<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681785326784.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>进入功能权限设置<br>
+在页面同名的操作功能编号里关联API接口<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681785419449.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>如果有功能权限控制，进行配置，同样需要关联接口<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681785445302.png" alt="" loading="lazy"></p>
+</li>
+</ul>
+<h1 id="本地环境联调怎么办-需要登录">本地环境联调怎么办 (需要登录)</h1>
+<p>因为功能号等接口需要登录才能查询，本地起的环境没有嵌套主APP所以没法登录。所以需要主APP里配置嵌套到本地环境。<br>
+应用是frame-layout-uf2.0<br>
+进入应用管理-&gt;应用-&gt;应用配置-&gt;参数配置<br>
+在子应用配置中将ocm_secu容器的地址配置成本地环境的地址即可。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1681812150427.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SSH执行远程script, command not found.]]></title>
+        <id>https://dev.eserica.com/notebook/post/ssh-zhi-xing-yuan-cheng-script-command-not-found/</id>
+        <link href="https://dev.eserica.com/notebook/post/ssh-zhi-xing-yuan-cheng-script-command-not-found/">
+        </link>
+        <updated>2023-02-22T07:08:08.000Z</updated>
+        <content type="html"><![CDATA[<p>问题：通过PUTTY进入，bash -s  &lt; xxx.sh可以正常运行。<br>
+远程SSH进入，并执行bash -s &lt; xxx.sh 报错npm command not found.</p>
+<pre><code># xxx.sh
+npm run start
+</code></pre>
+<p>原因: EXPORT PATH配在/etc/profile里。<br>
+/etc/profile 是账户的配置文件，login shell (如putty) 会读这里加载环境变量，所以command可以正常执行。<br>
+而通过命令行SSH并执行远程script，创建的是non-login shell，此时不会读/etc/profile。</p>
+<pre><code>ssh -p ${(remotePort )} -i ${privateKeyPath} ${sshServer} 'bash -s' &lt; ${script on remote machine}
+</code></pre>
+<p>/etc/bashrc 是bash shell的配置文件，通过远程ssh执行bash，需要在这里同样配置环境变量。</p>
+<pre><code># /etc/bashrc
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/usr/local/node/bin
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[银行基线挖坑笔记]]></title>
+        <id>https://dev.eserica.com/notebook/post/taro-wa-keng-bi-ji/</id>
+        <link href="https://dev.eserica.com/notebook/post/taro-wa-keng-bi-ji/">
+        </link>
+        <updated>2022-07-01T03:15:16.000Z</updated>
+        <content type="html"><![CDATA[<p>Taro行内样式转化规则无效<br>
+在编译时，Taro 会帮你对样式做尺寸转换操作，但是如果是在 JS 中书写了行内样式，那么编译时就无法做替换了，针对这种情况，Taro 提供了 API Taro.pxTransform 来做运行时的尺寸转换。</p>
+<pre><code>&lt;View className='index' style={{height:Taro.pxTransform(40)}}&gt;
+    &lt;Text className='text'&gt;Hello world!&lt;/Text&gt;
+&lt;/View&gt;
+</code></pre>
+<h1 id="appserver长啥样">AppServer长啥样</h1>
+<p>方法写在fundapp-service。<br>
+model/interface在父目录，implementation/class在/impl<br>
+class路径：<br>
+<code>fundapp-service\src\main\java\com\hundsun\fund\fundapp\service\product\impl\ProductServiceImpl.java</code><br>
+interface路径：<br>
+<code>fundapp-service\src\main\java\com\hundsun\fund\fundapp\service\product\ProductService.java</code></p>
+<p>Server routing/mapping写在fundapp-server<br>
+<code>fundapp-server\src\main\java\com\hundsun\fund\fundapp\server\product\ProductController.java</code></p>
+<ol>
+<li>
+<p>引入 fundapp/service/product目录下的ProductService.java<br>
+import com.hundsun.fund.fundapp.service.product.ProductService;</p>
+</li>
+<li>
+<p>使用引入的ProductService<br>
+主routing为/product/product，当get /product/product/productInfoList.json时调用productInfoList方法，该方法调用productService.productInfoList</p>
+</li>
+</ol>
+<pre><code>@Api(basePath = &quot;/product&quot;,value = &quot;产品信息&quot;,tags = &quot;产品信息&quot;)
+@Controller
+@RequestMapping(&quot;/product/product&quot;)
+public class ProductController {
+    @Autowired
+    private ProductService productService;
+
+    @ApiOperation(value = &quot;产品列表，客户端使用&quot;,response = ProductInfoVM.class)
+    @RequestMapping(value = &quot;/productInfoList.json&quot;,method = {RequestMethod.GET,RequestMethod.POST})
+    @ResponseBody
+    public ViewModelAdapter productInfoList(@ModelAttribute FundStateQueryParam param){
+        return productService.productInfoList(param);
+    }
+}
+</code></pre>
+<h1 id="原生打包配置">原生打包配置</h1>
+<h2 id="如何修改arr模板库">如何修改arr模板库</h2>
+<p>替换lib中的miniappgmu.aar<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924506551.png" alt="" loading="lazy"></p>
+<h2 id="如何修改前端模板库">如何修改前端模板库</h2>
+<p>可以直接将zip重命名为版本号后放进miniapp文件夹，文件夹中根据最高的版本号打包<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924393631.png" alt="" loading="lazy"></p>
+<h2 id="如何打离线包">如何打离线包</h2>
+<p>将编译好的文件放到stream/main/0.0.0中<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924581540.png" alt="" loading="lazy"></p>
+<h2 id="如何打远程包">如何打远程包</h2>
+<p>main.gmu中将默认main.vhost.light.com改为自己的本地地址。<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656924654409.png" alt="" loading="lazy"></p>
+<h3 id="如何指定路径和拼接入参">如何指定路径和拼接入参</h3>
+<p>后面填入pages页面路径，后面拼接入参。需要注意需要encodeURI。<br>
+encode之前：<br>
+<code>gmu://miniapp?standaloneMode=false&amp;startPage=http://192.168.137.1:4777/app.miniapp.js#pages/index/home?name=LDY681&amp;text=jsnToMiniprogramDemo</code><br>
+encode之后：<br>
+<code>gmu://miniapp?standaloneMode=false&amp;startPage=http%3A%2F%2F192.168.137.1%3A4777%2Fapp.miniapp.js%23pages%2Findex%2Fhome%3Fname%3DLDY681%26text%3DjsnToMiniprogramDemo</code></p>
+<h2 id="如何打摇一摇">如何打摇一摇</h2>
+<h3 id="需要增加以下6个依赖buildgradle中加入依赖">需要增加以下6个依赖，build.gradle中加入依赖</h3>
+<pre><code>    implementation(name: 'jsndebug', ext: 'aar')
+    implementation(name: 'lightviewpreview', ext: 'aar')
+    implementation(name: 'miniappdebug', ext: 'aar')
+    implementation(name: 'jsnativegmu', ext: 'aar')
+    implementation(name: 'barcodegmu-release', ext: 'aar')
+    implementation(name: 'servicegmu-release', ext: 'aar')
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://dev.eserica.com/notebook//post-images/1656925116136.png" alt="" loading="lazy"></figure>
+<h3 id="www中增加入口页面">www中增加入口页面</h3>
+<p>入口页面是带了摇一摇功能的几个tab页，第二个tab页可以直接点击进入默认的小程序 。配置地址方式和之前一样<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656925327476.png" alt="" loading="lazy"></p>
+<h3 id="app指向www页面">app指向www页面</h3>
+<p>通过web方式打开www中的index.html<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656925413587.png" alt="" loading="lazy"><br>
+现在研发中心支持3种方式<br>
+如果是js打头的，那么就是走原来老light的jsnative<br>
+如果是miniapp打头的，那么就是走小程序的lightweb<br>
+如果是web，那就是web<br>
+<img src="https://dev.eserica.com/notebook//post-images/1656926499959.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+</feed>
