@@ -1,0 +1,210 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sub-Region Analysis | Dayu Liu</title>
+<link rel="shortcut icon" href="https://dev.eserica.com/notebook//favicon.ico?v=1795586646422">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://dev.eserica.com/notebook//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Sub-Region Analysis | Dayu Liu - Atom Feed" href="https://dev.eserica.com/notebook//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J298FQVHGN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-J298FQVHGN');
+</script>
+
+
+    <meta name="description" content="Up and downs: Superior, Inferior
+Left and Right: Nasal, Temporal (varies for Left OS /Right OD Eye)
+
+Octant breakdowns:
+..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://dev.eserica.com/notebook/">
+  <img class="avatar" src="https://dev.eserica.com/notebook//images/avatar.png?v=1795586646422" alt="">
+  </a>
+  <h1 class="site-title">
+    Dayu Liu
+  </h1>
+  <p class="site-description">
+    Dayu's Personal Blog
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/notebook" class="menu">
+          Home
+        </a>
+      
+    
+      
+        <a href="https://github.com/LDY681" class="menu" target="_blank">
+          Github
+        </a>
+      
+    
+      
+        <a href="https://www.linkedin.com/in/dayul" class="menu" target="_blank">
+          Linkedin
+        </a>
+      
+    
+      
+        <a href="https://orcid.org/0009-0006-2601-5800" class="menu" target="_blank">
+          ORCID
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Sub-Region Analysis
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-06-18
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>Up and downs: Superior, Inferior<br>
+Left and Right: Nasal, Temporal (varies for Left OS /Right OD Eye)<br>
+<img src="https://dev.eserica.com/notebook//post-images/1781753555246.png" alt="" loading="lazy"></p>
+<p>Octant breakdowns:<br>
+Labels in <strong>black</strong>: Right OD Eye<br>
+Labels in <strong>red</strong>: Left OS Eye<br>
+<img src="https://dev.eserica.com/notebook//post-images/1781753467606.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://dev.eserica.com/notebook/post/octa-binarisation-frangi-fuzzy-cmeans/">
+              <h3 class="post-title">
+                Hessian-based Filters (FRANGI + JERMAN)
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'Ov23liQHgU35gyGEnovX',
+    clientSecret: '22e432129826210471d675cda1f5a76218aa9509',
+    repo: 'notebook',
+    owner: 'LDY681',
+    admin: ['LDY681'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Pura Vida
+  <a class="rss" href="https://dev.eserica.com/notebook//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
